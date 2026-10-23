@@ -1,0 +1,10 @@
+# Añadir a homelab-terraform/terraform.tfvars (los valores reales NO van al repo público).
+
+k3s01_ipv4_address     = "192.0.2.10/24" # una IP libre fuera del rango DHCP
+k3s01_vm_id            = 110
+k3s01_cpu_cores        = 6
+k3s01_memory_dedicated = 10240 # 8192 si en el paso 00 docker01 se quedó en 26 GiB
+k3s01_disk_size        = 80
+k3s01_startup_order    = 20 # mayor que el startup order de docker01
+k3s01_template_vm_id   = 9013 # plantilla Debian 13 cloud-init
+lab_subdomain          = "apl"

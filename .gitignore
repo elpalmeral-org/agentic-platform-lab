@@ -1,0 +1,28 @@
+# Valores reales del homelab: nunca al repo público
+lab.env
+*.local.md
+
+# Credenciales
+kubeconfig*
+*.kubeconfig
+.kube/
+*.pem
+*.key
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars
+!*.tfvars.example
+
+# Generados
+/tmp/
+*.rendered.yaml
+
+# Entorno
+.DS_Store
+.venv/
+node_modules/
+__pycache__/

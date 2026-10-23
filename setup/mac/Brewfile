@@ -1,0 +1,23 @@
+# Herramientas del Mac para el agentic-platform-lab
+# Uso: brew bundle --file=setup/mac/Brewfile
+
+# Kubernetes
+brew "kubernetes-cli"   # kubectl
+brew "helm"
+brew "k9s"
+brew "kustomize"
+brew "kubeconform"      # valida manifiestos contra los esquemas
+brew "argocd"           # CLI de Argo CD (fase 1)
+
+# Utilidades
+brew "jq"
+brew "yq"
+brew "gettext"          # envsubst, para renderizar las plantillas *.tpl
+brew "gh"               # GitHub CLI
+cask "1password-cli"    # op: kubeconfig y credenciales en 1Password
+
+# Fases posteriores (descomentar al llegar)
+# brew "uv"             # F2 · backend Python
+# brew "node"           # F2 · Angular CLI
+# brew "cosign"         # F2 · verificar firmas de imágenes
+# brew "syft"           # F2 · SBOM en local
