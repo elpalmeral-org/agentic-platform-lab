@@ -105,7 +105,9 @@ Mensajes clave que cada acto debe dejar claros:
 | SCM y CI | GitHub (org Free, repos públicos) + Actions | Gates bloqueantes reales gratis en repos públicos |
 | Registro | GHCR (público) | Integrado con Actions y con la firma de cosign |
 | Runtime | k3s de un nodo en una VM de Proxmox | Kubernetes real con huella mínima |
-| GitOps | Argo CD *(propuesto, pendiente de confirmar)* | UI muy visual para demos; integración nativa con Port |
+| GitOps | Argo CD | UI muy visual para demos; integración nativa con Port |
+| Secretos | External Secrets + 1Password | Ningún secreto en Git, ni cifrado |
+| TLS | cert-manager + Let's Encrypt (DNS-01, Route 53) | Certificados válidos sin exponer nada |
 | IDP | Port.io (plan Free) | Es el IDP que usa el relato corporativo; SaaS sin mantenimiento |
 | Gateway de agentes | HarnessRouter CE (UHP) | Desacopla al cliente del harness concreto: hoy Claude Code, mañana otro |
 | Motor de agentes | Claude (API de Anthropic) *(pendiente de confirmar)* | — |

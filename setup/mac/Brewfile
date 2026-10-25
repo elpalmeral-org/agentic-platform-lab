@@ -15,6 +15,7 @@ brew "yq"
 brew "gettext"          # envsubst, para renderizar las plantillas *.tpl
 brew "gh"               # GitHub CLI
 cask "1password-cli"    # op: kubeconfig y credenciales en 1Password
+brew "awscli"           # paso 04: usuario IAM para el reto DNS-01 en Route 53
 
 # Fases posteriores (descomentar al llegar)
 # brew "uv"             # F2 · backend Python

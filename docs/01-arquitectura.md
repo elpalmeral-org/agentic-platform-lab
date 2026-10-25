@@ -26,7 +26,7 @@ flowchart TB
                 TRF["Traefik"]
             end
             subgraph K["k3s01 · VM nueva"]
-                ARGO["Argo CD (propuesto)"]
+                ARGO["Argo CD"]
                 HR["HarnessRouter<br/>UHP"]
                 ARC["ARC<br/>runners efímeros"]
                 EXP["Port k8s exporter<br/>+ Ocean Argo CD"]
@@ -110,8 +110,8 @@ flowchart TB
         end
         subgraph PLAT["Namespaces de plataforma"]
             NS_ARGO["argocd"]
-            NS_ESO["external-secrets (propuesto)"]
-            NS_CM["cert-manager (propuesto)"]
+            NS_ESO["external-secrets"]
+            NS_CM["cert-manager"]
             NS_PORT["port-k8s-exporter · port-ocean"]
         end
         subgraph AGENT["Namespaces de agentes"]
