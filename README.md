@@ -81,11 +81,11 @@ flowchart TB
 |---|---|---|
 | `agentic-platform-lab` | Este repo: documentación, setup, Port como código, harness corporativo | 🟡 en construcción |
 | `meridian-orders` | Monorepo de la aplicación de ejemplo: backend Python (FastAPI) + front Angular, OpenSpec, harness consumido | ⚪ fase 2 |
-| `platform-gitops` | Estado deseado del clúster: addons de plataforma y entornos `dev/staging/prod` | ⚪ fase 1 |
+| `platform-gitops` | Estado deseado del clúster: addons de plataforma y entornos `dev/staging/prod` | 🟢 en marcha · fase 1 |
 
 ## Estado
 
-Ver [`docs/02-roadmap.md`](docs/02-roadmap.md). Paso actual: **setup · paso 02 — k3s** (falta prueba de ingress y snapshot `k3s-baseline`).
+Ver [`docs/02-roadmap.md`](docs/02-roadmap.md). Paso actual: **lab · fase 1 — PR 1 de TLS en `platform-gitops`** ([ingress-tls](docs/lab/ingress-tls.md)). Setup 00-05 completado.
 
 ## Reglas de este repo
 

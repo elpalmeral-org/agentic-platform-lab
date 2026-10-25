@@ -50,15 +50,39 @@ flowchart TD
 | 01a | Plantilla Debian 13 cloud-init (9013) con usuario `pfj` y clave de 1Password | `homelab-terraform/templates/debian13` | ✅ |
 | 01 | Crear la VM `k3s01` con Terraform y su DNS | [paso-01-vm-k3s01](setup/paso-01-vm-k3s01.md) | ✅ |
 | 02 | Instalar k3s, kubeconfig en el Mac, prueba de humo | [paso-02-k3s](setup/paso-02-k3s.md) | 🟡 k3s `v1.36.5+k3s1` instalado, pods y almacenamiento OK · falta `curl` al ingress y snapshot |
-| 03 | Configurar la org GitHub, publicar este repo, crear la org en Port | [paso-03-cuentas](setup/paso-03-cuentas.md) | ⚪ (se puede hacer ya) |
+| 03 | Configurar la org GitHub, publicar este repo, crear la org en Port | [paso-03-cuentas](setup/paso-03-cuentas.md) | 🟡 repo publicado y Port listo · falta confirmar ajustes de la org (3.1) y ruleset (3.3) |
 
 ## 3. Fases siguientes (borrador, se detallarán al llegar)
 
-### F1 · Plataforma base
-- Bootstrap de Argo CD y patrón *app-of-apps* desde `platform-gitops`.
-- Gestión de secretos (❓ ESO + 1Password vs Sealed Secrets).
-- Ingress con Traefik y TLS (❓ Let's Encrypt DNS-01 vs CA interna).
-- Políticas de admisión (Kyverno) y cuotas por namespace.
+### F1 · Plataforma base (decidida el 24-oct)
+
+Argo CD ([ADR 0007](adr/0007-argocd-gitops.md)) · ESO + 1Password ([ADR 0008](adr/0008-secretos-eso-1password.md)) ·
+Let's Encrypt DNS-01 en Route 53 ([ADR 0009](adr/0009-tls-letsencrypt-dns01-route53.md)).
+
+```mermaid
+flowchart LR
+    subgraph SETUP["① Setup (manual)"]
+        P04["Paso 04<br/>bóveda agentic-lab<br/>service account · IAM Route 53"]
+        P05["Paso 05<br/>repo platform-gitops<br/>bootstrap Argo CD + token ESO"]
+    end
+    subgraph LAB["② Lab (GitOps, por oleadas)"]
+        W0["ola 0<br/>Argo CD se autogestiona<br/>External Secrets"]
+        W1["ola 1<br/>ClusterSecretStore 1Password<br/>cert-manager"]
+        W2["ola 2<br/>ExternalSecret Route 53<br/>ClusterIssuer LE staging → prod"]
+        W3["ola 3<br/>Certificate *.apl<br/>TLS por defecto en Traefik"]
+        W4["ola 4<br/>Ingress HTTPS de Argo CD<br/>Kyverno + cuotas"]
+    end
+    P04 --> P05 --> W0 --> W1 --> W2 --> W3 --> W4
+```
+
+| Paso | Capa | Qué | Estado |
+|---|---|---|---|
+| 04 | Setup | Bóveda `agentic-lab`, service account de 1Password, usuario IAM para DNS-01 | ✅ ([doc](setup/paso-04-secretos-externos.md)) · limpiar tokens viejos de `agentic-lab` |
+| 05 | Setup | Repo `platform-gitops`, bootstrap de Argo CD y del token de ESO | ✅ ([doc](setup/paso-05-bootstrap-gitops.md)) |
+| — | Lab | Olas -1 a 1: Argo CD autogestionado, External Secrets, `ClusterSecretStore` | ✅ ([argocd](lab/argocd.md) · [secretos](lab/secretos.md)) |
+| PR 1 | Lab | Olas 2-3: cert-manager, `ClusterIssuer` LE, comodín `*.apl` en staging, TLS por defecto en Traefik | 🟡 **siguiente** ([doc](lab/ingress-tls.md)) |
+| PR 2 | Lab | Emisor a prod + Argo CD en `https://argocd.apl.<dominio>` | ⚪ |
+| — | Lab | Ola 4: Kyverno y cuotas por namespace | ⚪ |
 
 ### F2 · Aplicación de ejemplo
 - Monorepo `meridian-orders`: `apps/backend` (FastAPI, uv, ruff, mypy, pytest) y `apps/frontend` (Angular, ESLint, Vitest/Jest).
@@ -96,9 +120,9 @@ Se plantearán **cuando haga falta decidirlas**, no antes.
 
 | # | Pregunta | Se decide en | Propuesta inicial |
 |---|---|---|---|
-| Q1 | ¿Argo CD o Flux? | F1 | Argo CD: UI para demo e integración nativa con Port |
-| Q2 | ¿Secretos con ESO + 1Password o con Sealed Secrets? | F1 | ESO + 1Password (ya es tu gestor) |
-| Q3 | ¿TLS con Let's Encrypt (DNS-01) o CA interna? | F1 | Depende del proveedor DNS público del dominio |
+| Q1 | ¿Argo CD o Flux? | F1 | ✅ **Argo CD** (ADR 0007) |
+| Q2 | ¿Secretos con ESO + 1Password o con Sealed Secrets? | F1 | ✅ **ESO + 1Password** (ADR 0008) |
+| Q3 | ¿TLS con Let's Encrypt (DNS-01) o CA interna? | F1 | ✅ **Let's Encrypt DNS-01 en Route 53** (ADR 0009) |
 | Q4 | ¿El motor de agentes sigue siendo solo Claude por API? | F5 | Sí, con un *workspace* dedicado y límite de gasto |
 | Q5 | ¿Usamos los agentes de IA de Port con tu propia clave LLM? | F3/F5 | A evaluar con el límite de uso del plan Free |
 | Q6 | ¿Langfuse sí o no? ¿Dónde? | F6 | En docker01 si cabe; si no, solo obs-stack |
@@ -112,3 +136,6 @@ Se plantearán **cuando haga falta decidirlas**, no antes.
 | 2026-10-24 | Paso 00: docker01 a 24 GiB con hugepages de 1 GiB y NUMA (a mano); `homelab-terraform` alineado sin drift |
 | 2026-10-24 | Paso 01a: plantilla Debian 13 cloud-init (9013) · Paso 01: VM k3s01 creada con Terraform |
 | 2026-10-24 | Paso 02: k3s `v1.36.5+k3s1` en marcha; línea base del nodo 75-93m CPU y 752 MiB (8 %) |
+| 2026-10-24 | Paso 03: repo publicado en la org; org de Port creada y credenciales en 1Password · F1 decidida (ADR 0007-0009) |
+| 2026-10-24 | Paso 04: bóveda `agentic-lab`, service account de solo lectura y usuario IAM de Route 53 verificados (✅ ✅ ⛔) · `platform-gitops` preparado (Argo CD 10.10.5, ESO 2.13.0) |
+| 2026-10-24 | Paso 05: Argo CD autogestionado, ESO y `ClusterSecretStore` sanos (incidencia: token con `\n` por `op read` sin `-n`) · PR 1 de TLS preparado · ADR 0010 |

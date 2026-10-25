@@ -38,9 +38,9 @@ flowchart TB
 
 | Componente | Página | Fase | Estado |
 |---|---|---|---|
-| Argo CD y *app-of-apps* | `argocd.md` | F1 | ⚪ |
-| Secretos | `secretos.md` | F1 | ⚪ |
-| Ingress y TLS | `ingress-tls.md` | F1 | ⚪ |
+| Argo CD y *app-of-apps* | [`argocd.md`](argocd.md) | F1 | ✅ |
+| Secretos (ESO + 1Password) | [`secretos.md`](secretos.md) | F1 | ✅ |
+| Ingress y TLS (cert-manager + LE DNS-01) | [`ingress-tls.md`](ingress-tls.md) | F1 | 🟡 PR 1 preparado |
 | Políticas de admisión | `politicas.md` | F1 | ⚪ |
 | Meridian Orders | `meridian-orders.md` | F2 | ⚪ |
 | CI/CD y promoción | `ci-cd.md` | F2 | ⚪ |
