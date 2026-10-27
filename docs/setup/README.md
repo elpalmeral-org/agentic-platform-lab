@@ -27,6 +27,7 @@ flowchart TD
 | [03 · Cuentas](paso-03-cuentas.md) | Navegador + Mac | 30 min | 🟢 | 🟡 falta confirmar 3.1 y 3.3 |
 | [04 · Secretos externos](paso-04-secretos-externos.md) | Mac (`op`, `aws`) | 30 min | 🟢 | ✅ |
 | [05 · Bootstrap GitOps](paso-05-bootstrap-gitops.md) | Mac + k3s01 | 30 min | 🟢 | ✅ |
+| [06 · GitHub App](paso-06-github-app.md) | Navegador + Mac (`gh`, `op`) | 30 min | 🟢 | ✅ |
 
 ## Cómo está escrito cada paso
 
