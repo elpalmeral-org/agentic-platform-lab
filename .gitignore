@@ -26,3 +26,4 @@ kubeconfig*
 .venv/
 node_modules/
 __pycache__/
+port/.inventario/
