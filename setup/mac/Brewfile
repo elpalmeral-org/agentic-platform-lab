@@ -18,6 +18,8 @@ cask "1password-cli"    # op: kubeconfig y credenciales en 1Password
 brew "awscli"           # paso 04: usuario IAM para el reto DNS-01 en Route 53
 brew "shellcheck"       # F2.4 · scripts de platform-gitops (gitops-ok)
 brew "cosign"           # F2.4 · verificar firmas de imágenes
+tap "hashicorp/tap"
+brew "hashicorp/tap/terraform"  # F3 · Port como código (estado en S3)
 
 # Fases posteriores (descomentar al llegar)
 # brew "uv"             # F2 · backend Python
