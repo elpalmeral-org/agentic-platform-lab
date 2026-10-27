@@ -16,6 +16,9 @@ flowchart TD
     P00 --> P01 --> P02 --> F0(["✅ Fase 0"])
     P03 --> F0
     F0 --> P04 --> P05 --> F1(["Fase 1 por GitOps"])
+    P06["06 · GitHub App<br/>elpalmeral-platform-bot"]
+    P07["07 · Port como código<br/>estado S3 · OIDC · GitHub Ocean"]
+    F1 --> P06 --> F2(["Fase 2"]) --> P07 --> F3(["Fase 3 · Port"])
     style F1 fill:#fde68a,stroke:#b45309
 ```
 
@@ -28,6 +31,7 @@ flowchart TD
 | [04 · Secretos externos](paso-04-secretos-externos.md) | Mac (`op`, `aws`) | 30 min | 🟢 | ✅ |
 | [05 · Bootstrap GitOps](paso-05-bootstrap-gitops.md) | Mac + k3s01 | 30 min | 🟢 | ✅ |
 | [06 · GitHub App](paso-06-github-app.md) | Navegador + Mac (`gh`, `op`) | 30 min | 🟢 | ✅ |
+| [07 · Port como código](paso-07-port.md) | Mac (`aws`, `gh`, `op`) + navegador | 30 min | 🟢 | ✅ |
 
 ## Cómo está escrito cada paso
 
