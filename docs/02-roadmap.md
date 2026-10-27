@@ -102,11 +102,24 @@ Trunk-based + release-please ([ADR 0011](adr/0011-trunk-based-release-please.md)
 
 > La puntuación de riesgo de pedidos **no** entra en F2: se reserva como primera feature AIDLC (F5).
 
-### F3 · IDP con Port
-- Integración GitHub (app de Port), exporter de Kubernetes y Ocean para Argo CD.
-- *Blueprints* como código en este repo: `service`, `environment`, `deployment`, `harness`, `agent`, `agent_run`.
-- Acciones: crear servicio desde plantilla, pedir feature (AIDLC), promocionar.
-- Scorecards: versión del harness al día, gates en verde, imagen firmada, SBOM presente.
+### F3 · IDP con Port (decidida el 27-oct)
+
+Linaje mixto: inventario por integraciones y eventos por los pipelines ([ADR 0016](adr/0016-linaje-mixto-port.md)) ·
+modelo como código con Terraform, `plan` en PR y `apply` en `main`, estado en S3 por OIDC
+([ADR 0017](adr/0017-port-como-codigo-terraform.md)). Diseño completo: [lab/port](lab/port.md).
+Objetivo: el **acto 1** de la [demo](demo/README.md), con un solo servicio real.
+
+| Paso | Capa | Qué | Estado |
+|---|---|---|---|
+| 07 | Setup | Bucket S3 del estado, rol OIDC, entorno `port` en GitHub, GitHub Ocean sin recursos por defecto | ✅ ([doc](setup/paso-07-port.md)) |
+| F3.1 | Lab | Adoptar plantillas ([ADR 0018](adr/0018-adoptar-plantillas-port.md)): importar `environment`/`deployment`/`workload`, crear `build`/`release` · workflow `plan`/`apply` | 🟡 **siguiente** |
+| F3.2 | Lab | *Mapping* de GitHub Ocean como código (repos, PR, releases) | ⚪ |
+| F3.3 | Lab | `port-k8s-exporter` como addon de `platform-gitops` → lo que corre | ⚪ |
+| F3.4 | Lab | Linaje: `publish.yml` → `build`; `platform-gitops` → `deployment` | ⚪ |
+| F3.5 | Lab | Scorecards (cadena de suministro, despliegue gobernado) y ficha del acto 1 | ⚪ |
+| F3.6 | Lab | Acción *self-service* "Promocionar a prod" | ⚪ |
+
+**Backlog:** ADR y reglas de plataforma como entidades del catálogo (decidido el 27-oct: más adelante).
 
 ### F4 · Harness Engineering
 - Harness corporativo: `AGENTS.md`/`CLAUDE.md`, skills, hooks deterministas, agentes validadores, corpus de grounding, políticas OPA.
@@ -155,4 +168,5 @@ Se plantearán **cuando haga falta decidirlas**, no antes.
 | 2026-10-25 | PR 1 de TLS fusionado (comodín staging OK) · PR 2 preparado · Kyverno/cuotas aplazados · F2 decidida (ADR 0011-0014) |
 | 2026-10-26 | F2.1-F2.3: código, CI de PR, release-please y publicación firmada en GHCR (lección: CVE críticas de Alpine en el front) |
 | 2026-10-27 | F2.4a: Meridian Orders en `orders-dev` solo por GitOps (CNPG sano, migración aplicada, API `0.1.0 · dev`) · ADR 0015 |
+| 2026-10-27 | F3 decidida: demo en tres actos (B → D → cierre), linaje mixto, Port en Terraform (ADR 0016-0017) · paso 07 preparado |
 | 2026-10-27 | F2.4b: CD en marcha. Dev automático (bot #5 y #6 con auto-merge), staging `0.1.0` (#7 + alta #8) y prod `0.1.0` con aprobación del entorno (#9 + alta #10). Incidencias: carrera tag/firma en la release y error OIDC transitorio en `cosign sign` (corregidas). **Fase 2 cerrada** |

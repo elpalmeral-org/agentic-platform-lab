@@ -44,7 +44,7 @@ flowchart TB
 | Políticas de admisión (Kyverno) y cuotas | `politicas.md` | F1 | ⏸️ pendiente (tras F2) |
 | Meridian Orders | [`meridian-orders.md`](meridian-orders.md) | F2 | ✅ dev · staging · prod |
 | CI/CD y promoción | [`ci-cd.md`](ci-cd.md) | F2 | ✅ |
-| Port.io | `port.md` | F3 | ⚪ |
+| Port.io | [`port.md`](port.md) | F3 | 🟡 diseñado |
 | Harness corporativo | `harness.md` | F4 | ⚪ |
 | OpenSpec / SDD | `openspec.md` | F4 | ⚪ |
 | HarnessRouter (UHP) | `uhp-harnessrouter.md` | F5 | ⚪ |

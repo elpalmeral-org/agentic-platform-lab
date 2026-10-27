@@ -3,16 +3,25 @@
 > Se construye en la fase F7, cuando el lab funcione de extremo a extremo. De momento recoge el
 > **diseño** de la demo para que el resto de fases lo tengan en cuenta.
 
-## Escenarios previstos
+## Guion: tres actos que acaban donde empiezan (decidido el 27-oct)
 
-| # | Escenario | Qué demuestra | Duración |
-|---|---|---|---|
-| D1 | Crear un servicio desde Port | Golden path: el repo nace con harness, gates y GitOps | 5 min |
-| D2 | Pedir una feature en lenguaje natural | AIDLC + SDD: spec con grounding y puerta humana 1 | 10 min |
-| D3 | El agente implementa; un gate bloquea | La confianza viene de los gates, no del modelo | 10 min |
-| D4 | Merge y promoción GitOps | Puerta humana 2, imagen firmada, Argo CD sincroniza | 5 min |
-| D5 | Trazabilidad y coste | Qué agente, qué harness, cuántos tokens, qué se desplegó | 5 min |
-| D6 | *(opcional)* Cambiar de harness vía UHP | El cliente no queda atado a un proveedor de agentes | 5 min |
+Público tipo: **a partes iguales CIO/CISO y arquitectura / design authority**. Un único servicio
+real (Meridian Orders); el catálogo crecerá después.
+
+```mermaid
+flowchart LR
+    A1["Acto 1 · 0-5 min<br/>Lo que corre en prod<br/>y el hilo hacia atrás"] --> A2["Acto 2 · 5-30 min<br/>Un cambio en directo<br/>petición → spec → agente → puertas"]
+    A2 --> A3["Acto 3 · 30-40 min<br/>Misma ficha, prod en 0.2.0<br/>① coste por agente ② aprobaciones"]
+    A3 -.->|"misma pantalla que el acto 1"| A1
+```
+
+| Acto | Qué se ve | Mensaje CIO/CISO | Mensaje arquitectura | Escenarios | Fase |
+|---|---|---|---|---|---|
+| 1 · Lo que corre en prod | Port: ficha de Meridian Orders → prod `0.1.0` → digest firmado, SBOM, CVE → PR de promoción y aprobador → release → PR de código | "Sé qué hay en producción, quién lo aprobó y que es lo aprobado" | "Las reglas son código (`gitops-ok`) y valen igual para personas y bots" | D4 (parte) | F3 |
+| 2 · Un cambio en directo | "Pedir feature" en Port → spec con puerta 1 → agente vía UHP → un gate bloquea → corrección → puerta 2 → dev → staging → prod | "El negocio pide, las máquinas ejecutan, las personas deciden" | spec como contrato, harness versionado, puertas deterministas y agénticas | D2 · D3 · D4 | F4-F5 |
+| 3 · Cierre | Misma ficha que el acto 1, ahora `0.2.0`: **primero** coste (€, tokens, modelo, versión de harness por ejecución de agente), **después** las aprobaciones humanas del hilo (spec, código, prod) | coste y responsabilidad medibles | trazabilidad de la spec al digest | D5 · D6 opcional | F5-F6 |
+
+D1 (crear un servicio desde Port) queda como escenario extra cuando haya más de un servicio.
 
 ## Ciclo de una demo
 
