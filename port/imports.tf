@@ -1,26 +1,9 @@
-# F3.1a · Adopción de los blueprints de la plantilla que vamos a ampliar (ADR 0018).
-# Con "terraform plan -generate-config-out=generated.tf" Terraform escribe su código tal como
-# están hoy en Port; después se ordena por ficheros y estos bloques se pueden borrar.
-#
-# Las agregaciones (DORA, etc.) se gestionan con un recurso aparte: port_aggregation_properties.
+# Adopciones pendientes (ADR 0018). Un bloque import ya aplicado no hace nada: se borra cuando
+# el recurso está en el estado. Historial: environment, deployment, workload y la entidad staging
+# se importaron en F3.1 (PR #1).
 
+# F3.2 · integración de GitHub Ocean instalada a mano en el paso 07
 import {
-  to = port_blueprint.environment
-  id = "environment"
-}
-
-import {
-  to = port_blueprint.deployment
-  id = "deployment"
-}
-
-import {
-  to = port_blueprint.workload
-  id = "workload"
-}
-
-# El entorno staging de la plantilla se conserva (dev y prod se crean nuevos; test y production se borran)
-import {
-  to = port_entity.staging
-  id = "environment:staging" # <blueprint>:<entidad>
+  to = port_integration.github_ocean
+  id = "github-ocean"
 }
