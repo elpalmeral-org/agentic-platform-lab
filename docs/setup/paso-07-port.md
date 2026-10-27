@@ -80,6 +80,12 @@ aws iam list-open-id-connect-providers --query 'OpenIDConnectProviderList[].Arn'
   || aws iam create-open-id-connect-provider \
        --url https://token.actions.githubusercontent.com --client-id-list sts.amazonaws.com
 
+# Prefijo del 'sub' que firma GitHub para este repo. Los repos nuevos usan *sujetos inmutables*
+# (repo:<org>@<id>/<repo>@<id>), no repo:<org>/<repo>: hay que preguntarlo, no suponerlo.
+export OIDC_SUB_PREFIX="$(gh api repos/$GH_ORG/agentic-platform-lab/actions/oidc/customization/sub \
+  --jq '.sub_claim_prefix // "repo:'"$GH_ORG"'/agentic-platform-lab"')"
+echo "$OIDC_SUB_PREFIX"
+
 envsubst < setup/aws/github-port-terraform-trust.json.tpl > /tmp/trust.json
 envsubst < setup/aws/port-terraform-state-policy.json.tpl > /tmp/policy.json
 grep -c '\${' /tmp/trust.json /tmp/policy.json   # 0 y 0: no queda ninguna variable sin sustituir
@@ -96,7 +102,7 @@ Qué permite exactamente:
 
 | Quién | Condición | Puede |
 |---|---|---|
-| un job de GitHub Actions | `sub = repo:elpalmeral-org/agentic-platform-lab:environment:port` | asumir el rol |
+| un job de GitHub Actions | `sub = repo:elpalmeral-org@<id>/agentic-platform-lab@<id>:environment:port` (sujeto inmutable) | asumir el rol |
 | el rol | — | leer, escribir y borrar `s3://<bucket>/port/*` (estado y su `.tflock`); listar ese prefijo |
 
 Ningún otro repo, rama sin entorno o *fork* puede asumirlo.
@@ -165,6 +171,7 @@ y una línea con la integración de GitHub.
 | `BucketAlreadyExists` | el nombre ya lo usa otra cuenta en el mundo | genera otro sufijo |
 | `IllegalLocationConstraintException` | región `us-east-1` | en esa región se omite `--create-bucket-configuration` |
 | `EntityAlreadyExists` en el proveedor OIDC | ya existía | es correcto: el `grep` lo evita la segunda vez |
+| `Not authorized to perform sts:AssumeRoleWithWebIdentity` en el workflow | el `sub` del token no coincide con la política: el repo usa **sujetos inmutables** (`use_immutable_subject: true`) | recalcular `OIDC_SUB_PREFIX` y `aws iam update-assume-role-policy` (ver 7.3) |
 | `401` en `access_token` de Port | `op read` sin `-n` o credencial antigua | usar `-n`; regenerar en Port → *Credentials* y actualizar 1Password |
 | En Port aparecen blueprints `githubRepository`… | no hubo opción de desactivar los recursos por defecto, o quedó activada | nada: en F3.1 Terraform los importa o los borra |
 
