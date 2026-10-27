@@ -115,7 +115,7 @@ Objetivo: el **acto 1** de la [demo](demo/README.md), con un solo servicio real.
 | F3.1 | Lab | Adoptar plantillas ([ADR 0018](adr/0018-adoptar-plantillas-port.md)): importar `environment`/`deployment`/`workload`, crear `build`/`release` · workflow `plan`/`apply` | ✅ PR #1 |
 | F3.2 | Lab | *Mapping* de GitHub Ocean como código (repos, `service`, PR, releases, workflows) | ✅ PR #2 |
 | F3.3 | Lab | `port-k8s-exporter` como addon de `platform-gitops` → lo que corre ([ADR 0019](adr/0019-exportador-kubernetes-gitops.md)) | ✅ |
-| F3.4 | Lab | Linaje: `publish.yml` → `build`; `platform-gitops` → `deployment` | ⚪ |
+| F3.4 | Lab | Linaje con acción de plataforma; despliegue confirmado por Argo CD ([ADR 0020](adr/0020-linaje-accion-plataforma-y-argo.md)): a) aprobado · b) `publish.yml` · c) Argo → webhook | 🟡 a) preparado |
 | F3.5 | Lab | Scorecards (cadena de suministro, despliegue gobernado) y ficha del acto 1 | ⚪ |
 | F3.6 | Lab | Acción *self-service* "Promocionar a prod" | ⚪ |
 

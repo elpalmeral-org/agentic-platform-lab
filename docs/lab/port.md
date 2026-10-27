@@ -97,7 +97,9 @@ flowchart LR
 | F3.1b | Ampliarlos, crear `build` y `release`, entidades `dev`/`staging`/`prod` · workflow `port` (`plan` en PR, `apply` en `main`) | ✅ PR #1 (`apply` desde CI: 4 importados, 4 creados, 4 cambiados) |
 | F3.2 | *Mapping* de GitHub Ocean como código (`port/github-ocean.tf`): organización, repos, `service`, PR, releases, workflows y ejecuciones | ✅ PR #2 · 1 servicio, 37 PR, 1 release, 106 ejecuciones |
 | F3.3 | `port-k8s-exporter` como addon de `platform-gitops` → `k8s_*`, `argocdApplication` y lo que corre en `workload` ([ADR 0019](../adr/0019-exportador-kubernetes-gitops.md)) | ✅ 1 clúster, 10 namespaces, 18 Deployments, 11 Applications, 6 `workload` con `running_image` |
-| F3.4 | Linaje: `publish.yml` → `build`; `platform-gitops` al fusionar → `deployment` | ⚪ |
+| F3.4a | Acción de plataforma `port-entity` + `port-lineage` en `platform-gitops`: `build` (firma verificada), `workload.approved_digest`, `deployment` Pending ([ADR 0020](../adr/0020-linaje-accion-plataforma-y-argo.md)) | 🟡 preparado |
+| F3.4b | `publish.yml` enriquece `build` (SBOM, procedencia, CVE, commit, PR) y enlaza `release` → `build` | ⚪ |
+| F3.4c | Webhook de Port + notificaciones de Argo CD: `deployment` Pending → Success / Failure | ⚪ |
 | F3.5 | Scorecards y página del servicio para el acto 1 · guion del acto 1 | ⚪ |
 | F3.6 | Acción *self-service* "Promocionar a prod" (lanza `promote.yml`) | ⚪ |
 

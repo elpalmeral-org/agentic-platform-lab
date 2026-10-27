@@ -24,3 +24,4 @@ decisión, se escribe otra que la sustituye.
 | [0017](0017-port-como-codigo-terraform.md) | El modelo de Port como código con Terraform, aplicado por PR | Aceptada | 2026-10-27 |
 | [0018](0018-adoptar-plantillas-port.md) | Adoptar las plantillas de Port que cuentan la historia; el resto, como escaparate | Aceptada | 2026-10-27 |
 | [0019](0019-exportador-kubernetes-gitops.md) | El exportador de Kubernetes de Port como addon GitOps, con su mapping en `platform-gitops` | Aceptada | 2026-10-27 |
+| [0020](0020-linaje-accion-plataforma-y-argo.md) | Linaje con una acción de plataforma; el despliegue lo confirma Argo CD | Aceptada | 2026-10-27 |
