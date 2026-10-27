@@ -80,12 +80,14 @@ flowchart TB
 | Repo | Contenido | Estado |
 |---|---|---|
 | `agentic-platform-lab` | Este repo: documentación, setup, Port como código, harness corporativo | 🟡 en construcción |
-| `meridian-orders` | Monorepo de la aplicación de ejemplo: backend Python (FastAPI) + front Angular, OpenSpec, harness consumido | ⚪ fase 2 |
-| `platform-gitops` | Estado deseado del clúster: addons de plataforma y entornos `dev/staging/prod` | 🟢 en marcha · fase 1 |
+| `meridian-orders` | Monorepo de la aplicación de ejemplo: backend Python (FastAPI) + front Angular, OpenSpec, harness consumido | 🟢 `0.1.0` en dev · staging · prod |
+| `platform-gitops` | Estado deseado del clúster: addons de plataforma y entornos `dev/staging/prod` | 🟢 en marcha · puerta `gitops-ok` |
 
 ## Estado
 
-Ver [`docs/02-roadmap.md`](docs/02-roadmap.md). Paso actual: **lab · fase 1 — PR 1 de TLS en `platform-gitops`** ([ingress-tls](docs/lab/ingress-tls.md)). Setup 00-05 completado.
+Ver [`docs/02-roadmap.md`](docs/02-roadmap.md). **Fases 1 y 2 cerradas** (27-oct): Meridian Orders se construye,
+firma y promociona por GitOps a dev, staging y prod ([CI/CD](docs/lab/ci-cd.md)). Siguiente: **F3 · Port**.
+Aplazados: Kyverno y cuotas por namespace.
 
 ## Reglas de este repo
 

@@ -25,8 +25,8 @@ flowchart LR
 | Fase | Capa | Objetivo | Estado |
 |---|---|---|---|
 | F0 | Setup | Tener k3s01 funcionando y las cuentas listas | 🟡 |
-| F1 | Lab | El clúster se gestiona solo desde `platform-gitops` | ⚪ |
-| F2 | Lab | Meridian Orders (FastAPI + Angular) se construye, firma y promociona por GitOps | ⚪ |
+| F1 | Lab | El clúster se gestiona solo desde `platform-gitops` | ✅ (salvo Kyverno y cuotas ⏸️) |
+| F2 | Lab | Meridian Orders (FastAPI + Angular) se construye, firma y promociona por GitOps | ✅ 27-oct |
 | F3 | Lab | Port refleja repos, despliegues y entornos; acciones *self-service* operativas | ⚪ |
 | F4 | Lab | El harness corporativo es un artefacto versionado que el repo de la app consume | ⚪ |
 | F5 | Lab | Un agente lleva una feature de la petición al PR, a través de UHP, con puertas humanas | ⚪ |
@@ -80,14 +80,27 @@ flowchart LR
 | 04 | Setup | Bóveda `agentic-lab`, service account de 1Password, usuario IAM para DNS-01 | ✅ ([doc](setup/paso-04-secretos-externos.md)) · limpiar tokens viejos de `agentic-lab` |
 | 05 | Setup | Repo `platform-gitops`, bootstrap de Argo CD y del token de ESO | ✅ ([doc](setup/paso-05-bootstrap-gitops.md)) |
 | — | Lab | Olas -1 a 1: Argo CD autogestionado, External Secrets, `ClusterSecretStore` | ✅ ([argocd](lab/argocd.md) · [secretos](lab/secretos.md)) |
-| PR 1 | Lab | Olas 2-3: cert-manager, `ClusterIssuer` LE, comodín `*.apl` en staging, TLS por defecto en Traefik | 🟡 **siguiente** ([doc](lab/ingress-tls.md)) |
-| PR 2 | Lab | Emisor a prod + Argo CD en `https://argocd.apl.<dominio>` | ⚪ |
-| — | Lab | Ola 4: Kyverno y cuotas por namespace | ⚪ |
+| PR 1 | Lab | Olas 2-3: cert-manager, `ClusterIssuer` LE, comodín `*.apl` en staging, TLS por defecto en Traefik | ✅ #1 ([doc](lab/ingress-tls.md)) |
+| PR 2 | Lab | Emisor a prod + Argo CD en `https://argocd.apl.<dominio>` | ✅ #2 |
+| — | Lab | Ola 4: Kyverno y cuotas por namespace | ⏸️ **pendiente** (aplazado el 25-oct; se retoma tras F2) |
 
-### F2 · Aplicación de ejemplo
-- Monorepo `meridian-orders`: `apps/backend` (FastAPI, uv, ruff, mypy, pytest) y `apps/frontend` (Angular, ESLint, Vitest/Jest).
-- CI en runners de GitHub: lint, tests, build, SBOM (Syft), escaneo (Grype), firma (cosign *keyless*).
-- CD por PR de *bump* en `platform-gitops`; promoción dev → staging → prod con entornos de GitHub y aprobación.
+### F2 · Aplicación de ejemplo (decidida el 25-oct)
+
+Trunk-based + release-please ([ADR 0011](adr/0011-trunk-based-release-please.md)) · promoción por PR en
+`platform-gitops` ([ADR 0012](adr/0012-promocion-por-pr-gitops.md)) · PostgreSQL con CloudNativePG
+([ADR 0013](adr/0013-postgresql-cloudnativepg.md)) · GitHub App `elpalmeral-platform-bot`
+([ADR 0014](adr/0014-github-app-platform-bot.md)). Diseño completo: [lab/meridian-orders](lab/meridian-orders.md).
+
+| Paso | Capa | Qué | Estado |
+|---|---|---|---|
+| 06 | Setup | GitHub App, repo `meridian-orders` vacío, variable y secreto de org | ✅ ([doc](setup/paso-06-github-app.md)) |
+| F2.1 | Lab | Código: FastAPI + Angular 22, OpenSpec de `orders`, Dockerfiles, tests | ✅ PR #1 |
+| F2.2 | Lab | CI de PR por rutas, títulos Conventional Commits, release-please | ✅ PR #2 |
+| F2.3 | Lab | Publicación: GHCR, SBOM, procedencia, Grype, cosign (reordenado: va antes del despliegue) | ✅ |
+| F2.4a | Lab | Despliegue en dev: CloudNativePG + base + overlay dev + ApplicationSet | ✅ `platform-gitops` #3 |
+| F2.4b | Lab | CD: PR automáticos de promoción (dev, staging), prod con aprobación y puerta `gitops-ok` ([ADR 0015](adr/0015-puerta-gitops-ok.md), [doc](lab/ci-cd.md)) | ✅ `0.1.0` en los tres entornos |
+
+> La puntuación de riesgo de pedidos **no** entra en F2: se reserva como primera feature AIDLC (F5).
 
 ### F3 · IDP con Port
 - Integración GitHub (app de Port), exporter de Kubernetes y Ocean para Argo CD.
@@ -139,3 +152,7 @@ Se plantearán **cuando haga falta decidirlas**, no antes.
 | 2026-10-24 | Paso 03: repo publicado en la org; org de Port creada y credenciales en 1Password · F1 decidida (ADR 0007-0009) |
 | 2026-10-24 | Paso 04: bóveda `agentic-lab`, service account de solo lectura y usuario IAM de Route 53 verificados (✅ ✅ ⛔) · `platform-gitops` preparado (Argo CD 10.10.5, ESO 2.13.0) |
 | 2026-10-24 | Paso 05: Argo CD autogestionado, ESO y `ClusterSecretStore` sanos (incidencia: token con `\n` por `op read` sin `-n`) · PR 1 de TLS preparado · ADR 0010 |
+| 2026-10-25 | PR 1 de TLS fusionado (comodín staging OK) · PR 2 preparado · Kyverno/cuotas aplazados · F2 decidida (ADR 0011-0014) |
+| 2026-10-26 | F2.1-F2.3: código, CI de PR, release-please y publicación firmada en GHCR (lección: CVE críticas de Alpine en el front) |
+| 2026-10-27 | F2.4a: Meridian Orders en `orders-dev` solo por GitOps (CNPG sano, migración aplicada, API `0.1.0 · dev`) · ADR 0015 |
+| 2026-10-27 | F2.4b: CD en marcha. Dev automático (bot #5 y #6 con auto-merge), staging `0.1.0` (#7 + alta #8) y prod `0.1.0` con aprobación del entorno (#9 + alta #10). Incidencias: carrera tag/firma en la release y error OIDC transitorio en `cosign sign` (corregidas). **Fase 2 cerrada** |
