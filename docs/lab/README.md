@@ -40,10 +40,10 @@ flowchart TB
 |---|---|---|---|
 | Argo CD y *app-of-apps* | [`argocd.md`](argocd.md) | F1 | ✅ |
 | Secretos (ESO + 1Password) | [`secretos.md`](secretos.md) | F1 | ✅ |
-| Ingress y TLS (cert-manager + LE DNS-01) | [`ingress-tls.md`](ingress-tls.md) | F1 | 🟡 PR 1 preparado |
-| Políticas de admisión | `politicas.md` | F1 | ⚪ |
-| Meridian Orders | `meridian-orders.md` | F2 | ⚪ |
-| CI/CD y promoción | `ci-cd.md` | F2 | ⚪ |
+| Ingress y TLS (cert-manager + LE DNS-01) | [`ingress-tls.md`](ingress-tls.md) | F1 | ✅ |
+| Políticas de admisión (Kyverno) y cuotas | `politicas.md` | F1 | ⏸️ pendiente (tras F2) |
+| Meridian Orders | [`meridian-orders.md`](meridian-orders.md) | F2 | ✅ dev · staging · prod |
+| CI/CD y promoción | [`ci-cd.md`](ci-cd.md) | F2 | ✅ |
 | Port.io | `port.md` | F3 | ⚪ |
 | Harness corporativo | `harness.md` | F4 | ⚪ |
 | OpenSpec / SDD | `openspec.md` | F4 | ⚪ |
