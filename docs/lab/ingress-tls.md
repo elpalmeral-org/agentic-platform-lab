@@ -52,7 +52,7 @@ gitGraph
     merge feat/tls-prod-argocd-ingress id: "PR 2"
 ```
 
-### PR 1 · `feat/tls-wildcard` (preparado)
+### PR 1 · `feat/tls-wildcard` ✅ fusionado (#1, 25-oct)
 
 Ficheros (ya en `~/git/homelab/platform-gitops`):
 
@@ -95,7 +95,30 @@ curl -skv "https://cualquiera.$LAB_SUBDOMAIN.$LAB_DOMAIN" 2>&1 | grep -E 'subjec
 # issuer: … (STAGING) …   subject: CN=*.apl.<dominio>
 ```
 
-### PR 2 · `feat/tls-prod-argocd-ingress` (se prepara al confirmar el PR 1)
+Resultado del 25-oct: `subject: CN=*.apl.<dominio>` · `issuer: (STAGING) … Let's Encrypt`.
+
+### PR 2 · `feat/tls-prod-argocd-ingress` ✅ fusionado (#2, 25-oct)
+
+```bash
+cd ~/git/homelab/platform-gitops
+git switch -c feat/tls-prod-argocd-ingress
+git add -A
+git commit -m "feat(tls): comodín con Let's Encrypt prod y Argo CD en HTTPS por Traefik"
+git push -u origin feat/tls-prod-argocd-ingress
+gh pr create --fill --base main
+gh pr merge --squash --delete-branch
+git switch main && git pull
+```
+
+Verificación:
+
+```bash
+kubectl -n kube-system get certificate wildcard-apl -w      # READY False → True (reemisión, 1-3 min)
+curl -sv "https://argocd.$LAB_SUBDOMAIN.$LAB_DOMAIN" 2>&1 | grep -E 'subject:|issuer:|HTTP/'
+# issuer: … Let's Encrypt … (sin STAGING) · HTTP/2 200 — y ya sin -k
+```
+
+Cambios:
 
 - `config/tls/wildcard-certificate.yaml`: `issuerRef.name: letsencrypt-prod`.
 - `bootstrap/argocd-values.yaml`: `global.domain: argocd.apl.<dominio>` y

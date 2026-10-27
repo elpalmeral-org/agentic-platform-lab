@@ -96,7 +96,7 @@ kubectl config use-context k3s01
 Este fichero es **admin del clúster**: guárdalo también en 1Password y no lo copies a ningún repo.
 
 ```bash
-op document create ~/.kube/k3s01.yaml --title "k3s01 · kubeconfig admin" --vault "<tu bóveda del homelab>"
+op document create ~/.kube/k3s01.yaml --title "k3s01-kubeconfig-admin" --vault Private
 ```
 
 ### 2.6 · Prueba de humo
