@@ -59,6 +59,12 @@ resource "port_entity" "dev" {
     number_props = { order = local.environments.dev.order }
     string_props = { promotion_gate = local.environments.dev.gate, dora_label = local.environments.dev.dora }
   }
+
+  lifecycle {
+    # Port devuelve las relaciones de plantilla vacías (null) y el plan querría "quitarlas" siempre.
+    # No se gestionan desde aquí: las rellenarán el exportador de Kubernetes y Argo CD (F3.3).
+    ignore_changes = [relations]
+  }
 }
 
 resource "port_entity" "staging" {
@@ -69,6 +75,12 @@ resource "port_entity" "staging" {
     number_props = { order = local.environments.staging.order }
     string_props = { promotion_gate = local.environments.staging.gate, dora_label = local.environments.staging.dora }
   }
+
+  lifecycle {
+    # Port devuelve las relaciones de plantilla vacías (null) y el plan querría "quitarlas" siempre.
+    # No se gestionan desde aquí: las rellenarán el exportador de Kubernetes y Argo CD (F3.3).
+    ignore_changes = [relations]
+  }
 }
 
 resource "port_entity" "prod" {
@@ -78,5 +90,11 @@ resource "port_entity" "prod" {
   properties = {
     number_props = { order = local.environments.prod.order }
     string_props = { promotion_gate = local.environments.prod.gate, dora_label = local.environments.prod.dora }
+  }
+
+  lifecycle {
+    # Port devuelve las relaciones de plantilla vacías (null) y el plan querría "quitarlas" siempre.
+    # No se gestionan desde aquí: las rellenarán el exportador de Kubernetes y Argo CD (F3.3).
+    ignore_changes = [relations]
   }
 }
