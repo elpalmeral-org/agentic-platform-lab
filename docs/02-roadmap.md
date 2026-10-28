@@ -10,7 +10,7 @@ flowchart LR
     F0["F0 · Setup<br/>capacidad · VM · k3s · cuentas"]
     F1["F1 · Plataforma base<br/>GitOps · secretos · ingress/TLS"]
     F2["F2 · App de ejemplo<br/>meridian-orders · CI · promoción"]
-    F3["F3 · IDP<br/>Port: catálogo · acciones · scorecards"]
+    F3["F3 · IDP<br/>Port: catálogo · workflows · scorecards"]
     F4["F4 · Harness Engineering<br/>harness versionado · OpenSpec · OPA"]
     F5["F5 · Agent Platform<br/>UHP · ARC · AIDLC · gates agénticos"]
     F6["F6 · Observabilidad<br/>trazas · coste por agente"]
@@ -27,7 +27,7 @@ flowchart LR
 | F0 | Setup | Tener k3s01 funcionando y las cuentas listas | 🟡 |
 | F1 | Lab | El clúster se gestiona solo desde `platform-gitops` | ✅ (salvo Kyverno y cuotas ⏸️) |
 | F2 | Lab | Meridian Orders (FastAPI + Angular) se construye, firma y promociona por GitOps | ✅ 27-oct |
-| F3 | Lab | Port refleja repos, despliegues y entornos; acciones *self-service* operativas | ⚪ |
+| F3 | Lab | Port refleja repos, despliegues y entornos; *self-service* con Workflows operativo | 🟡 |
 | F4 | Lab | El harness corporativo es un artefacto versionado que el repo de la app consume | ⚪ |
 | F5 | Lab | Un agente lleva una feature de la petición al PR, a través de UHP, con puertas humanas | ⚪ |
 | F6 | Lab | Cada ejecución de agente es trazable y tiene coste visible en Grafana y en Port | ⚪ |
@@ -117,7 +117,7 @@ Objetivo: el **acto 1** de la [demo](demo/README.md), con un solo servicio real.
 | F3.3 | Lab | `port-k8s-exporter` como addon de `platform-gitops` → lo que corre ([ADR 0019](adr/0019-exportador-kubernetes-gitops.md)) | ✅ |
 | F3.4 | Lab | Linaje con acción de plataforma; despliegue confirmado por Argo CD ([ADR 0020](adr/0020-linaje-accion-plataforma-y-argo.md)): a) aprobado · b) `publish.yml` · c) Argo → webhook | ✅ |
 | F3.5 | Lab | Scorecards (cadena de suministro, corre lo aprobado, promoción con puertas) y ficha del acto 1 como código | ✅ |
-| F3.6 | Lab | Acción *self-service* **Promocionar** (release del catálogo · prod/staging · puerta en GitHub) | 🟡 preparado |
+| F3.6 | Lab | **Promocionar** como Workflow de Port ([ADR 0021](adr/0021-workflows-port-en-lugar-de-acciones.md)): release del catálogo · prod/staging · puerta en GitHub | 🟡 preparado |
 
 **Backlog:** ADR y reglas de plataforma como entidades del catálogo (decidido el 27-oct: más adelante).
 
