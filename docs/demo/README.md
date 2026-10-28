@@ -23,6 +23,8 @@ flowchart LR
 
 D1 (crear un servicio desde Port) queda como escenario extra cuando haya más de un servicio.
 
+Ficha del acto 1: [`ficha-acto-1.md`](ficha-acto-1.md).
+
 ## Ciclo de una demo
 
 ```mermaid

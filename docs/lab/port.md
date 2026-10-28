@@ -101,8 +101,8 @@ flowchart LR
 | F3.4b | `publish.yml` enriquece `build` (SBOM, procedencia, CVE, commit, PR) y enlaza `release` → `build` | ✅ `meridian-orders` #15 · hilo de dev completo sin intervención |
 | F3.4c | Webhook de Port (`port/webhook-argocd.tf`, URL solo en el estado y en 1Password) + notificaciones de Argo CD: `deployment` Pending → Success / Failure | ✅ dev, staging y prod en `Success` con la hora real de sincronización |
 | F3.4 · relleno | Despliegues de staging y prod `0.1.0` (anteriores al linaje) completados una vez con la acción `port-entity`: PR de promoción #7/#9, aprobador, PR de código #3 e imágenes. DORA: 1 despliegue a prod | ✅ 28-oct |
-| F3.5a | Scorecards en Terraform (`port/scorecards.tf`): **Cadena de suministro** y **Corre lo aprobado** por `workload`; **Promoción con puertas** por `deployment` | 🟡 preparado |
-| F3.5b | Ficha de Meridian Orders para el acto 1: arriba versión por entorno con «corre lo aprobado», las dos scorecards, el último despliegue a prod y una métrica DORA; debajo DORA y fiabilidad del CI. Se diseña en la UI y se importa a Terraform (`port_page`, beta) | ⚪ |
+| F3.5a | Scorecards en Terraform (`port/scorecards.tf`): **Cadena de suministro** y **Corre lo aprobado** por `workload`; **Promoción con puertas** por `deployment` | ✅ 6 `workload` en Gold/Gold · despliegues: staging y prod Gold, dev Silver (sin puerta humana por diseño) |
+| F3.5b | Ficha de Meridian Orders para el acto 1: arriba versión por entorno con «corre lo aprobado», las dos scorecards, el último despliegue a prod y una métrica DORA; debajo DORA y fiabilidad del CI. Se diseña en la UI ([guía](../demo/ficha-acto-1.md)) y se importa a Terraform (`port_page`, beta) | 🟡 en la UI |
 | F3.6 | Acción *self-service* "Promocionar a prod" (lanza `promote.yml`) | ⚪ |
 
 ## 5. Backlog (fuera de F3 por decisión del 27-oct)
