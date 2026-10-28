@@ -1,5 +1,5 @@
 # deployment · adoptado de la plantilla (ADR 0018): UN EVENTO POR PROMOCIÓN.
-# Lo crea platform-gitops al fusionar un PR de promoción (F3.4). Sus propiedades de plantilla
+# Lo crea platform-gitops al fusionar un PR de promoción (Pending) y lo cierra Argo CD (Success/Failure, webhook-argocd.tf). Sus propiedades de plantilla
 # (createdAt, deploymentStatus, environment) alimentan los agregados DORA de service: no se tocan.
 # Relaciones de plantilla conservadas: service, github_pull_request (PR de CÓDIGO: lead time).
 resource "port_blueprint" "deployment" {
@@ -42,6 +42,15 @@ resource "port_blueprint" "deployment" {
       promotion_pr_url = {
         title  = "PR de promoción"
         format = "url"
+      }
+      confirmed_at = {
+        title       = "Confirmado por Argo CD"
+        description = "Fin de la sincronización que dejó el entorno Synced + Healthy (webhook argocd-deployments)"
+        format      = "date-time"
+      }
+      gitops_revision = {
+        title       = "Revisión de platform-gitops"
+        description = "Commit que Argo CD sincronizó"
       }
     }
   }
