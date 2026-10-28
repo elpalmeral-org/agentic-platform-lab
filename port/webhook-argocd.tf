@@ -15,7 +15,7 @@ locals {
 
 resource "port_webhook" "argocd" {
   identifier  = "argocd-deployments"
-  title       = "Argo CD · confirmación de despliegues"
+  title       = "Argo CD · despliegues" # máx. 30 caracteres
   description = "Argo CD notifica sync+salud de las Applications de Meridian Orders; cierra el deployment que abrió platform-gitops"
   icon        = "Argo"
   enabled     = true
