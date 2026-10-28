@@ -38,14 +38,15 @@ resource "port_action" "promote" {
           required    = true
           format      = "entity"
           blueprint   = port_blueprint.release.identifier
-          dataset = jsonencode({
+          # Solo las releases de este servicio (su identificador empieza por el del servicio)
+          dataset = {
             combinator = "and"
             rules = [{
               property = "$identifier"
               operator = "contains"
-              value    = { jqQuery = ".entity.identifier" }
+              value    = { jq_query = ".entity.identifier" }
             }]
-          })
+          }
           sort = {
             property = "published_at"
             order    = "DESC"
