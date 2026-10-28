@@ -7,3 +7,9 @@ import {
   to = port_integration.github_ocean
   id = "github-ocean"
 }
+
+# F3.5b · ficha del servicio diseñada en la UI (docs/demo/ficha-acto-1.md)
+import {
+  to = port_page.service_entity
+  id = "serviceEntity"
+}

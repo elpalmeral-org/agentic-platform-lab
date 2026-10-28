@@ -1,0 +1,422 @@
+[
+  {
+    "id": "gCpTpDfveJd6gGzV",
+    "type": "grouper",
+    "displayMode": "tabs",
+    "activeGroupUrlParam": "activeTab",
+    "groupsOrder": [
+      "Overview",
+      "Related Entities",
+      "Runs",
+      "Audit Log",
+      "Scorecards",
+      "Dashboard"
+    ],
+    "groups": [
+      {
+        "title": "Overview",
+        "widgets": [
+          {
+            "id": "VjMGdUaNzWwm9QSV",
+            "type": "dashboard-widget",
+            "layout": [
+              {
+                "height": 400,
+                "columns": [
+                  {
+                    "id": "px5TDQIgGq9Qy93U",
+                    "size": 12
+                  }
+                ]
+              },
+              {
+                "height": 400,
+                "columns": [
+                  {
+                    "id": "0jr7xZVSQoS20wQw",
+                    "size": 12
+                  }
+                ]
+              },
+              {
+                "height": 400,
+                "columns": [
+                  {
+                    "id": "W4Erva0Ekm5fV6E5",
+                    "size": 3
+                  },
+                  {
+                    "id": "yeQPafgxhuN3zen4",
+                    "size": 3
+                  },
+                  {
+                    "id": "rc5wFEoYQscWkWu4",
+                    "size": 3
+                  },
+                  {
+                    "id": "0snyxe99OQPO5t2t",
+                    "size": 3
+                  }
+                ]
+              },
+              {
+                "height": 400,
+                "columns": [
+                  {
+                    "id": "rRmuhzcdpFvZYC4M",
+                    "size": 12
+                  }
+                ]
+              }
+            ],
+            "widgets": [
+              {
+                "type": "table-entities-explorer",
+                "displayMode": "widget",
+                "title": "Entornos",
+                "excludedFields": [],
+                "description": "",
+                "emptyStateText": "",
+                "icon": "AmazonEKS",
+                "dataset": {
+                  "combinator": "and",
+                  "rules": [
+                    {
+                      "operator": "relatedTo",
+                      "blueprint": "service",
+                      "value": "meridian-orders"
+                    }
+                  ]
+                },
+                "blueprintConfig": {
+                  "workload": {
+                    "filterSettings": {
+                      "filterBy": {
+                        "combinator": "and",
+                        "rules": []
+                      }
+                    },
+                    "groupSettings": {
+                      "groupBy": [
+                        "environment"
+                      ]
+                    },
+                    "sortSettings": {
+                      "sortBy": [
+                        {
+                          "property": "$title",
+                          "order": "desc"
+                        }
+                      ]
+                    },
+                    "propertiesSettings": {
+                      "order": [],
+                      "shown": [
+                        "$updatedAt",
+                        "$title",
+                        "version",
+                        "url",
+                        "argo_health_status",
+                        "supply_chain",
+                        "governed_runtime"
+                      ]
+                    }
+                  }
+                },
+                "blueprint": "workload",
+                "entitiesQueryMode": "optimized",
+                "entitiesQueryMaxResults": 1000,
+                "showOnlyRelatedEntities": true,
+                "createdBy": "user_haIbniIj5KYNGgYn",
+                "updatedBy": "user_haIbniIj5KYNGgYn",
+                "createdAt": "2026-10-28T12:01:41.435Z",
+                "updatedAt": "2026-10-28T12:06:09.931Z",
+                "id": "px5TDQIgGq9Qy93U"
+              },
+              {
+                "type": "table-entities-explorer",
+                "displayMode": "widget",
+                "title": "Producción - Promociones",
+                "excludedFields": [],
+                "description": "",
+                "emptyStateText": "",
+                "icon": "Github",
+                "dataset": {
+                  "combinator": "and",
+                  "rules": [
+                    {
+                      "operator": "=",
+                      "property": "environment",
+                      "value": "Production"
+                    },
+                    {
+                      "operator": "relatedTo",
+                      "blueprint": "service",
+                      "value": "meridian-orders"
+                    }
+                  ]
+                },
+                "blueprintConfig": {
+                  "deployment": {
+                    "filterSettings": {
+                      "filterBy": {
+                        "combinator": "and",
+                        "rules": []
+                      }
+                    },
+                    "groupSettings": {
+                      "groupBy": []
+                    },
+                    "sortSettings": {
+                      "sortBy": [
+                        {
+                          "property": "confirmed_at",
+                          "order": "desc"
+                        }
+                      ]
+                    },
+                    "propertiesSettings": {
+                      "order": [
+                        "$title",
+                        "$updatedAt",
+                        "tag",
+                        "deploymentStatus"
+                      ],
+                      "shown": [
+                        "$updatedAt",
+                        "$title",
+                        "deploymentStatus",
+                        "approved_by",
+                        "merged_by",
+                        "promotion_pr_url",
+                        "tag",
+                        "confirmed_at",
+                        "promotion_gates"
+                      ]
+                    }
+                  }
+                },
+                "blueprint": "deployment",
+                "entitiesQueryMode": "optimized",
+                "entitiesQueryMaxResults": 1000,
+                "showOnlyRelatedEntities": true,
+                "createdBy": "user_haIbniIj5KYNGgYn",
+                "updatedBy": "user_haIbniIj5KYNGgYn",
+                "createdAt": "2026-10-28T12:07:46.273Z",
+                "updatedAt": "2026-10-28T12:10:14.846Z",
+                "id": "0jr7xZVSQoS20wQw"
+              },
+              {
+                "title": "Despliegues a producción",
+                "icon": "GitPullRequest",
+                "blueprint": "{{blueprint}}",
+                "chartType": "displaySingleProperty",
+                "unit": "custom",
+                "displayFormatting": "none",
+                "description": "",
+                "property": "deployment_frequency",
+                "unitCustom": "/ semana",
+                "type": "entities-number-chart",
+                "entity": "{{url.identifier}}",
+                "emptyStateText": "",
+                "createdBy": "user_haIbniIj5KYNGgYn",
+                "updatedBy": "user_haIbniIj5KYNGgYn",
+                "createdAt": "2026-10-28T12:12:38.924Z",
+                "updatedAt": "2026-10-28T12:16:21.867Z",
+                "id": "W4Erva0Ekm5fV6E5",
+                "dataset": {
+                  "combinator": "and",
+                  "rules": []
+                }
+              },
+              {
+                "title": "Lead Time de cambios (Hours)",
+                "icon": "GitPullRequest",
+                "blueprint": "{{blueprint}}",
+                "chartType": "displaySingleProperty",
+                "unit": "custom",
+                "displayFormatting": "none",
+                "description": "",
+                "property": "github_lead_time_for_change",
+                "unitCustom": "/ h",
+                "type": "entities-number-chart",
+                "entity": "{{url.identifier}}",
+                "emptyStateText": "",
+                "createdBy": "user_haIbniIj5KYNGgYn",
+                "updatedBy": "user_haIbniIj5KYNGgYn",
+                "createdAt": "2026-10-28T12:14:06.566Z",
+                "updatedAt": "2026-10-28T12:14:32.866Z",
+                "id": "yeQPafgxhuN3zen4",
+                "dataset": {
+                  "combinator": "and",
+                  "rules": []
+                }
+              },
+              {
+                "title": "Fallos de CI · 30 días",
+                "icon": "GitPullRequest",
+                "blueprint": "{{blueprint}}",
+                "chartType": "displaySingleProperty",
+                "unit": "%",
+                "displayFormatting": "none",
+                "description": "",
+                "property": "github_monthly_workflow_failure_rate",
+                "unitAlignment": "left",
+                "type": "entities-number-chart",
+                "entity": "{{url.identifier}}",
+                "emptyStateText": "",
+                "createdBy": "user_haIbniIj5KYNGgYn",
+                "updatedBy": "user_haIbniIj5KYNGgYn",
+                "createdAt": "2026-10-28T12:15:13.803Z",
+                "updatedAt": "2026-10-28T12:15:13.803Z",
+                "id": "rc5wFEoYQscWkWu4"
+              },
+              {
+                "title": "Ejecuciones de CI · 30 días",
+                "icon": "GitPullRequest",
+                "blueprint": "{{blueprint}}",
+                "chartType": "displaySingleProperty",
+                "unit": "none",
+                "displayFormatting": "none",
+                "description": "",
+                "property": "github_workflow_runs_30d",
+                "type": "entities-number-chart",
+                "entity": "{{url.identifier}}",
+                "emptyStateText": "",
+                "createdBy": "user_haIbniIj5KYNGgYn",
+                "updatedBy": "user_haIbniIj5KYNGgYn",
+                "createdAt": "2026-10-28T12:15:57.833Z",
+                "updatedAt": "2026-10-28T12:15:57.833Z",
+                "id": "0snyxe99OQPO5t2t"
+              },
+              {
+                "type": "table-entities-explorer",
+                "displayMode": "widget",
+                "title": "PR abiertas",
+                "excludedFields": [],
+                "description": "",
+                "emptyStateText": "",
+                "icon": "GitPullRequest",
+                "dataset": {
+                  "combinator": "and",
+                  "rules": []
+                },
+                "blueprintConfig": {
+                  "githubPullRequest": {
+                    "propertiesSettings": {
+                      "order": [],
+                      "shown": [
+                        "$title",
+                        "$updatedAt",
+                        "$createdAt"
+                      ]
+                    }
+                  }
+                },
+                "blueprint": "githubPullRequest",
+                "entitiesQueryMode": "optimized",
+                "entitiesQueryMaxResults": 1000,
+                "showOnlyRelatedEntities": true,
+                "createdBy": "user_haIbniIj5KYNGgYn",
+                "updatedBy": "user_haIbniIj5KYNGgYn",
+                "createdAt": "2026-10-28T12:17:06.409Z",
+                "updatedAt": "2026-10-28T12:17:06.409Z",
+                "id": "rRmuhzcdpFvZYC4M"
+              }
+            ],
+            "createdBy": "user_haIbniIj5KYNGgYn",
+            "updatedBy": "user_haIbniIj5KYNGgYn",
+            "createdAt": "2026-10-28T12:01:41.435Z",
+            "updatedAt": "2026-10-28T12:17:06.409Z"
+          }
+        ]
+      },
+      {
+        "title": "Related Entities",
+        "widgets": [
+          {
+            "id": "6OLBl8O3UVHCytQr",
+            "type": "grouper",
+            "title": "Related Entities",
+            "displayMode": "switch",
+            "groups": [
+              {
+                "title": "Table",
+                "icon": "Table",
+                "widgets": [
+                  {
+                    "id": "102NSMw2e7r2w7Fq",
+                    "type": "table-entities-explorer-by-direction"
+                  }
+                ]
+              },
+              {
+                "title": "Graph",
+                "icon": "Relation",
+                "widgets": [
+                  {
+                    "id": "dC6HEhVa14QvO0nO",
+                    "type": "graph-entities-explorer",
+                    "hiddenBlueprints": [],
+                    "dataset": {
+                      "combinator": "or",
+                      "rules": [
+                        {
+                          "operator": "relatedTo",
+                          "value": "{{url.identifier}}",
+                          "blueprint": "{{blueprint}}"
+                        },
+                        {
+                          "combinator": "and",
+                          "rules": [
+                            {
+                              "operator": "=",
+                              "value": "{{url.identifier}}",
+                              "property": "$identifier"
+                            },
+                            {
+                              "operator": "=",
+                              "value": "{{blueprint}}",
+                              "property": "$blueprint"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Runs",
+        "widgets": [
+          {
+            "title": "Run Log",
+            "id": "1yV3Fg7JM3vTwIOF",
+            "type": "runs-table",
+            "query": {
+              "entity": "{{url.identifier}}",
+              "blueprint": "{{blueprint}}"
+            }
+          }
+        ]
+      },
+      {
+        "title": "Audit Log",
+        "widgets": [
+          {
+            "id": "0S3BufnMrDYoQlM4",
+            "type": "table-audit-log",
+            "query": {
+              "entity": "{{url.identifier}}",
+              "blueprint": "{{blueprint}}"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

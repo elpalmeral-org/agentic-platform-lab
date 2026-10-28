@@ -8,7 +8,7 @@ diseño en [`docs/lab/port.md`](../docs/lab/port.md).
 
 | Gestiona | No gestiona (vive en la UI o lo alimentan las integraciones) |
 |---|---|
-| `environment` (y sus entidades `dev`, `staging`, `prod`), `deployment`, `workload`, `build`, `release`, *mapping* de GitHub Ocean | `service`, `github*`, `k8s_*`, `argocd*`, `dynatrace*`, `awsAccount`, `cloudResource`, `organization`, las scorecards de plantilla, los blueprints de sistema `_*` |
+| `environment` (y sus entidades `dev`, `staging`, `prod`), `deployment`, `workload`, `build`, `release`, *mapping* de GitHub Ocean, webhook de Argo CD, scorecards del acto 1 y la ficha del servicio (`pages/`) | `service`, `github*`, `k8s_*`, `argocd*`, `dynatrace*`, `awsAccount`, `cloudResource`, `organization`, las scorecards de plantilla, los blueprints de sistema `_*` |
 
 Las **entidades** que crean los pipelines y las integraciones no las toca Terraform.
 
@@ -19,6 +19,7 @@ cd port
 set -a; source ../lab.env; set +a
 export PORT_CLIENT_ID="$(op read -n 'op://agentic-lab/Port Org/ClientId')"
 export PORT_CLIENT_SECRET="$(op read -n 'op://agentic-lab/Port Org/ClientSecret')"
+export PORT_BETA_FEATURES_ENABLED=true   # port_page es beta
 terraform init -backend-config="bucket=$TF_STATE_BUCKET" -backend-config="region=$AWS_REGION"
 terraform plan
 ```

@@ -36,6 +36,7 @@ jobs:
       AWS_REGION: ${{ vars.AWS_REGION }}
       TF_IN_AUTOMATION: "true"
       TF_INPUT: "false"
+      PORT_BETA_FEATURES_ENABLED: "true" # port_page (ficha del servicio) es beta en el proveedor
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
