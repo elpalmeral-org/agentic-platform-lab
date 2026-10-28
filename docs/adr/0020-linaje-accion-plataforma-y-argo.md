@@ -55,3 +55,13 @@ pipeline de la app. El mismo `port-lineage` tiene un modo `state` (a mano) que r
 - ⚠️ Las promociones anteriores a F3.4 no tienen `deployment`: DORA empieza a contar desde aquí.
 - ⚠️ Hasta F3.4c los despliegues se quedan en `Pending`.
 - ⚠️ La credencial de Port pasa a ser secreto de la org, limitado a `meridian-orders` y `platform-gitops`.
+
+## Lecciones de la puesta en marcha (28-oct)
+
+- Port limita el `title` de un webhook a **30 caracteres**; el proveedor de Terraform no lo valida y
+  el error solo sale en el `apply`.
+- Las suscripciones de notificaciones en la plantilla de un **ApplicationSet** necesitan un valor
+  **no vacío** (`…subscribe.on-deployed.port: port`): con `""` no llegaban a las Applications. El
+  webhook ignora el destinatario.
+- Al activar las notificaciones, Argo CD avisa una vez de cada Application ya sana: los despliegues
+  de staging y prod anteriores al linaje aparecen con su hora real de sincronización.
