@@ -103,5 +103,13 @@ resource "port_blueprint" "workload" {
       path  = "build.critical_cves"
       title = "CVE críticas"
     }
+    sbom = {
+      path  = "build.sbom"
+      title = "SBOM"
+    }
+    provenance = {
+      path  = "build.provenance"
+      title = "Procedencia SLSA"
+    }
   }
 }
