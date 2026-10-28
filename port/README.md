@@ -8,7 +8,7 @@ diseño en [`docs/lab/port.md`](../docs/lab/port.md).
 
 | Gestiona | No gestiona (vive en la UI o lo alimentan las integraciones) |
 |---|---|
-| `environment` (y sus entidades `dev`, `staging`, `prod`), `deployment`, `workload`, `build`, `release`, *mapping* de GitHub Ocean, webhook de Argo CD, scorecards del acto 1 y la ficha del servicio (`pages/`) | `service`, `github*`, `k8s_*`, `argocd*`, `dynatrace*`, `awsAccount`, `cloudResource`, `organization`, las scorecards de plantilla, los blueprints de sistema `_*` |
+| `environment` (y sus entidades `dev`, `staging`, `prod`), `deployment`, `workload`, `build`, `release`, *mapping* de GitHub Ocean, webhook de Argo CD, scorecards del acto 1, la ficha del servicio (`pages/`) y los Workflows *self-service* (`workflow-*.tf`, [ADR 0021](../docs/adr/0021-workflows-port-en-lugar-de-acciones.md)) | `service`, `github*`, `k8s_*`, `argocd*`, `dynatrace*`, `awsAccount`, `cloudResource`, `organization`, las scorecards de plantilla, los blueprints de sistema `_*` |
 
 Las **entidades** que crean los pipelines y las integraciones no las toca Terraform.
 

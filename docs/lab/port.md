@@ -103,7 +103,7 @@ flowchart LR
 | F3.4 · relleno | Despliegues de staging y prod `0.1.0` (anteriores al linaje) completados una vez con la acción `port-entity`: PR de promoción #7/#9, aprobador, PR de código #3 e imágenes. DORA: 1 despliegue a prod | ✅ 28-oct |
 | F3.5a | Scorecards en Terraform (`port/scorecards.tf`): **Cadena de suministro** y **Corre lo aprobado** por `workload`; **Promoción con puertas** por `deployment` | ✅ |
 | F3.5b | Ficha de Meridian Orders para el acto 1: arriba versión por entorno con «corre lo aprobado», las dos scorecards, el último despliegue a prod y una métrica DORA; debajo DORA y fiabilidad del CI. Se diseña en la UI y se importa a Terraform (`port_page`, beta) | ✅ `port/page-service.tf` + `pages/service-entity.json` · plan sin cambios tras importar |
-| F3.6 | Acción *self-service* **Promocionar** (`port/action-promote.tf`): release del catálogo + entorno (prod/staging); lanza `promote.yml` vía GitHub Ocean; sin aprobación en Port: la puerta es el entorno `prod` de GitHub | 🟡 preparado |
+| F3.6 | **Promocionar** como Workflow de Port (`port/workflow-promote.tf`, [ADR 0021](../adr/0021-workflows-port-en-lugar-de-acciones.md)): formulario con servicio, entorno (prod/staging) y release del catálogo, en el menú ⚡ del servicio y en el Self-service hub; un nodo de GitHub lanza `promote.yml`; sin aprobación en Port: la puerta es el entorno `prod` de GitHub | 🟡 preparado (sustituye a la acción clásica) |
 
 ## 5. Backlog (fuera de F3 por decisión del 27-oct)
 
