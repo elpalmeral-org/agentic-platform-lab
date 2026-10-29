@@ -22,9 +22,9 @@ flowchart TB
     subgraph F4["F4 · harness"]
         HAR["harness.md"]
         SDD["openspec.md"]
+        UHP["uhp-harnessrouter.md"]
     end
     subgraph F5["F5 · agentes"]
-        UHP["uhp-harnessrouter.md"]
         ARC["arc-runners.md"]
         AIDLC["aidlc.md"]
     end
@@ -44,10 +44,10 @@ flowchart TB
 | Políticas de admisión (Kyverno) y cuotas | `politicas.md` | F1 | ⏸️ pendiente (tras F2) |
 | Meridian Orders | [`meridian-orders.md`](meridian-orders.md) | F2 | ✅ dev · staging · prod |
 | CI/CD y promoción | [`ci-cd.md`](ci-cd.md) | F2 | ✅ |
-| Port.io | [`port.md`](port.md) | F3 | 🟡 diseñado |
-| Harness corporativo | `harness.md` | F4 | ⚪ |
+| Port.io | [`port.md`](port.md) | F3 | ✅ |
+| Harness corporativo | [`harness.md`](harness.md) | F4 | 🟡 diseñado |
 | OpenSpec / SDD | `openspec.md` | F4 | ⚪ |
-| HarnessRouter (UHP) | `uhp-harnessrouter.md` | F5 | ⚪ |
+| HarnessRouter (UHP) | `uhp-harnessrouter.md` | F4 | ⚪ |
 | Runners ARC | `arc-runners.md` | F5 | ⚪ |
 | Flujo AIDLC | `aidlc.md` | F5 | ⚪ |
 | Observabilidad y coste | `observabilidad.md` | F6 | ⚪ |

@@ -26,3 +26,6 @@ decisión, se escribe otra que la sustituye.
 | [0019](0019-exportador-kubernetes-gitops.md) | El exportador de Kubernetes de Port como addon GitOps, con su mapping en `platform-gitops` | Aceptada | 2026-10-27 |
 | [0020](0020-linaje-accion-plataforma-y-argo.md) | Linaje con una acción de plataforma; el despliegue lo confirma Argo CD | Aceptada | 2026-10-27 |
 | [0021](0021-workflows-port-en-lugar-de-acciones.md) | Lo que se pide desde Port se construye como Workflow, no como acción clásica | Aceptada | 2026-10-28 |
+| [0022](0022-harness-repo-propio-formatos-abiertos.md) | El harness corporativo vive en su propio repo y se escribe en formatos abiertos | Aceptada | 2026-10-28 |
+| [0023](0023-apm-distribucion-harness-ok.md) | APM distribuye el harness a los repos; `harness-ok` lo hace cumplir | Aceptada | 2026-10-28 |
+| [0024](0024-harnessrouter-en-f4-proveedores.md) | HarnessRouter llega en F4 y aloja el harness por rol y versión; tres proveedores | Aceptada | 2026-10-28 |

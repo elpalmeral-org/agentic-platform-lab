@@ -103,11 +103,12 @@ flowchart LR
 | F3.4 · relleno | Despliegues de staging y prod `0.1.0` (anteriores al linaje) completados una vez con la acción `port-entity`: PR de promoción #7/#9, aprobador, PR de código #3 e imágenes. DORA: 1 despliegue a prod | ✅ 28-oct |
 | F3.5a | Scorecards en Terraform (`port/scorecards.tf`): **Cadena de suministro** y **Corre lo aprobado** por `workload`; **Promoción con puertas** por `deployment` | ✅ |
 | F3.5b | Ficha de Meridian Orders para el acto 1: arriba versión por entorno con «corre lo aprobado», las dos scorecards, el último despliegue a prod y una métrica DORA; debajo DORA y fiabilidad del CI. Se diseña en la UI y se importa a Terraform (`port_page`, beta) | ✅ `port/page-service.tf` + `pages/service-entity.json` · plan sin cambios tras importar |
-| F3.6 | **Promocionar** como Workflow de Port (`port/workflow-promote.tf`, [ADR 0021](../adr/0021-workflows-port-en-lugar-de-acciones.md)): formulario con servicio, entorno (prod/staging) y release del catálogo, en el menú ⚡ del servicio y en el Self-service hub; un nodo de GitHub lanza `promote.yml`; sin aprobación en Port: la puerta es el entorno `prod` de GitHub | 🟡 preparado (sustituye a la acción clásica) |
+| F3.6 | **Promocionar** como Workflow de Port (`port/workflow-promote.tf`, [ADR 0021](../adr/0021-workflows-port-en-lugar-de-acciones.md)): formulario con servicio, entorno (prod/staging) y release del catálogo, en el menú ⚡ del servicio y en el Self-service hub; un nodo de GitHub lanza `promote.yml`; sin aprobación en Port: la puerta es el entorno `prod` de GitHub | ✅ PR #8 · `staging` `0.1.0` lanzado desde el menú ⚡: `promote.yml` en verde y nodo en verde (sin cambios: ya estaba). Prod se estrenará con `0.2.0` (acto 3) |
 
 ## 5. Backlog (fuera de F3 por decisión del 27-oct)
 
 - **ADR y reglas de plataforma como entidades** (`adr`, `guardrail` con las reglas de `gitops-ok`),
   ligadas al servicio. Gancho para arquitectura en el acto 1. Requiere *frontmatter* en las ADR.
 - Más servicios reales en el catálogo para que los scorecards comparen.
+- Cosmética de la ficha: título en los `deployment` que crea el webhook de Argo CD (`title` en el *mapping* y en el relleno); valorar desagrupar la tabla *Entornos*.
 - Integración de Port con Claude Managed Agents frente a la ruta UHP (ADR 0006): se evalúa en F5.
