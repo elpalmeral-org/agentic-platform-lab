@@ -11,8 +11,8 @@ flowchart LR
     F1["F1 · Plataforma base<br/>GitOps · secretos · ingress/TLS"]
     F2["F2 · App de ejemplo<br/>meridian-orders · CI · promoción"]
     F3["F3 · IDP<br/>Port: catálogo · workflows · scorecards"]
-    F4["F4 · Harness Engineering<br/>harness versionado · OpenSpec · OPA"]
-    F5["F5 · Agent Platform<br/>UHP · ARC · AIDLC · gates agénticos"]
+    F4["F4 · Harness Engineering<br/>harness versionado · APM · UHP · OpenSpec"]
+    F5["F5 · Agent Platform<br/>ARC · AIDLC · gates agénticos"]
     F6["F6 · Observabilidad<br/>trazas · coste por agente"]
     F7["F7 · Demo kit<br/>guion · escenarios · reset"]
 
@@ -28,7 +28,7 @@ flowchart LR
 | F1 | Lab | El clúster se gestiona solo desde `platform-gitops` | ✅ (salvo Kyverno y cuotas ⏸️) |
 | F2 | Lab | Meridian Orders (FastAPI + Angular) se construye, firma y promociona por GitOps | ✅ 27-oct |
 | F3 | Lab | Port refleja repos, despliegues y entornos; *self-service* con Workflows operativo | ✅ 28-oct |
-| F4 | Lab | El harness corporativo es un artefacto versionado que el repo de la app consume | ⚪ |
+| F4 | Lab | El harness corporativo es un producto versionado y firmado, agnóstico del modelo: lo consumen los repos (APM) y el gateway UHP | 🟡 diseñada 28-oct |
 | F5 | Lab | Un agente lleva una feature de la petición al PR, a través de UHP, con puertas humanas | ⚪ |
 | F6 | Lab | Cada ejecución de agente es trazable y tiene coste visible en Grafana y en Port | ⚪ |
 | F7 | Demo | Guion de 30-45 min reproducible y *reset* en menos de 10 min | ⚪ |
@@ -121,13 +121,27 @@ Objetivo: el **acto 1** de la [demo](demo/README.md), con un solo servicio real.
 
 **Backlog:** ADR y reglas de plataforma como entidades del catálogo (decidido el 27-oct: más adelante).
 
-### F4 · Harness Engineering
-- Harness corporativo: `AGENTS.md`/`CLAUDE.md`, skills, hooks deterministas, agentes validadores, corpus de grounding, políticas OPA.
-- Versionado y firma; `harness.lock` en la app y *drift gate*.
-- OpenSpec como contrato de SDD.
+### F4 · Harness Engineering (decidida el 28-oct)
+
+Repo propio `platform-harness` en formatos abiertos ([ADR 0022](adr/0022-harness-repo-propio-formatos-abiertos.md)) ·
+distribución con APM y check `harness-ok` ([ADR 0023](adr/0023-apm-distribucion-harness-ok.md)) ·
+HarnessRouter en F4 con Anthropic, OpenRouter y modelo local ([ADR 0024](adr/0024-harnessrouter-en-f4-proveedores.md)).
+Diseño completo: [lab/harness](lab/harness.md).
+
+| Paso | Capa | Qué | Estado |
+|---|---|---|---|
+| 08 | Setup | Repo `platform-harness`, claves de proveedores en 1Password, límites de gasto | ⚪ |
+| F4.1 | Lab | Contenido `harness-v0.1.0` (APM: instrucciones, skills, agentes, hooks; MCP de Port; corpus; OPA) | ⚪ |
+| F4.2 | Lab | Release firmada (`apm pack` + cosign + GitHub Release) | ⚪ |
+| F4.3 | Lab | `meridian-orders` consume el harness · `harness-ok` obligatorio | ⚪ |
+| F4.4 | Lab | PR automático de *upgrade* · versión mínima en OPA | ⚪ |
+| F4.5 | Lab | OpenSpec en `meridian-orders` · `openspec validate --strict` | ⚪ |
+| F4.6 | Lab | HarnessRouter CE en k3s con tres proveedores | ⚪ |
+| F4.7 | Lab | `harness-sync` a UHP · prueba de humo en tres combinaciones base + modelo | ⚪ |
+| F4.8 | Lab | Port: versión del harness por servicio y regla de scorecard | ⚪ |
 
 ### F5 · Enterprise Agent Platform
-- HarnessRouter CE en k3s (manifiestos propios: no hay chart oficial).
+- (HarnessRouter CE pasa a F4, [ADR 0024](adr/0024-harnessrouter-en-f4-proveedores.md).)
 - ARC (*Actions Runner Controller*) con runners efímeros.
 - Workflows `aidlc-propose` y `aidlc-implement`; 3 validadores agénticos en cada PR.
 - Agentes como entidades del catálogo de Port.

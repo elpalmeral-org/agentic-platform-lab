@@ -74,14 +74,15 @@ flowchart LR
 ```mermaid
 flowchart LR
     subgraph ORG["GitHub · org pública"]
-        LAB["agentic-platform-lab<br/>docs · setup · Port como código<br/>harness corporativo (fuente)"]
-        APP["meridian-orders<br/>apps/backend (FastAPI)<br/>apps/frontend (Angular)<br/>openspec/ · harness.lock"]
+        LAB["agentic-platform-lab<br/>docs · setup · Port como código"]
+        HAR["platform-harness<br/>harness corporativo (APM)<br/>políticas · puertas · roles UHP"]
+        APP["meridian-orders<br/>apps/backend (FastAPI)<br/>apps/frontend (Angular)<br/>openspec/ · apm.yml · apm.lock.yaml"]
         OPS["platform-gitops<br/>addons/ (plataforma)<br/>apps/meridian-orders/{dev,staging,prod}"]
     end
     GHCR[("GHCR<br/>imágenes firmadas")]
     ARGO["Argo CD"]
 
-    LAB -->|"release del harness<br/>PR de upgrade"| APP
+    HAR -->|"release firmada<br/>PR de upgrade"| APP
     APP -->|"CI: build · SBOM · cosign"| GHCR
     APP -->|"CD: PR de bump de imagen"| OPS
     OPS -->|reconcilia| ARGO
@@ -91,6 +92,7 @@ flowchart LR
 | Repo | Escribe en él | Nunca escribe en él |
 |---|---|---|
 | `agentic-platform-lab` | Pablo (PR) | Agentes de producto |
+| `platform-harness` | Pablo (PR) y el workflow de release | Agentes de producto |
 | `meridian-orders` | Desarrolladores y agentes AIDLC (siempre por PR) | Argo CD |
 | `platform-gitops` | Workflow de CD (PR de promoción) y Pablo | Agentes AIDLC directamente |
 
