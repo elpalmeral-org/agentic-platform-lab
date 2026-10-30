@@ -18,7 +18,8 @@ flowchart TD
     F0 --> P04 --> P05 --> F1(["Fase 1 por GitOps"])
     P06["06 · GitHub App<br/>elpalmeral-platform-bot"]
     P07["07 · Port como código<br/>estado S3 · OIDC · GitHub Ocean"]
-    F1 --> P06 --> F2(["Fase 2"]) --> P07 --> F3(["Fase 3 · Port"])
+    P08["08 · Harness<br/>repo platform-harness · proveedores · gateway"]
+    F1 --> P06 --> F2(["Fase 2"]) --> P07 --> F3(["Fase 3 · Port"]) --> P08 --> F4(["Fase 4 · Harness"])
     style F1 fill:#fde68a,stroke:#b45309
 ```
 
@@ -32,6 +33,7 @@ flowchart TD
 | [05 · Bootstrap GitOps](paso-05-bootstrap-gitops.md) | Mac + k3s01 | 30 min | 🟢 | ✅ |
 | [06 · GitHub App](paso-06-github-app.md) | Navegador + Mac (`gh`, `op`) | 30 min | 🟢 | ✅ |
 | [07 · Port como código](paso-07-port.md) | Mac (`aws`, `gh`, `op`) + navegador | 30 min | 🟢 | ✅ |
+| [08 · Harness](paso-08-harness.md) | Mac (`gh`, `op`, `kubectl`) + navegador | 40 min | 🟢 (gasto con límite) | 🟡 en curso |
 
 ## Cómo está escrito cada paso
 

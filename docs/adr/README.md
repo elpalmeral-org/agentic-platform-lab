@@ -28,4 +28,5 @@ decisión, se escribe otra que la sustituye.
 | [0021](0021-workflows-port-en-lugar-de-acciones.md) | Lo que se pide desde Port se construye como Workflow, no como acción clásica | Aceptada | 2026-10-28 |
 | [0022](0022-harness-repo-propio-formatos-abiertos.md) | El harness corporativo vive en su propio repo y se escribe en formatos abiertos | Aceptada | 2026-10-28 |
 | [0023](0023-apm-distribucion-harness-ok.md) | APM distribuye el harness a los repos; `harness-ok` lo hace cumplir | Aceptada | 2026-10-28 |
-| [0024](0024-harnessrouter-en-f4-proveedores.md) | HarnessRouter llega en F4 y aloja el harness por rol y versión; tres proveedores | Aceptada | 2026-10-28 |
+| [0024](0024-harnessrouter-en-f4-proveedores.md) | HarnessRouter llega en F4 y aloja el harness por rol y versión; tres proveedores | Aceptada · modificada por 0025 | 2026-10-28 |
+| [0025](0025-dos-motores-un-harness.md) | Un harness, dos motores: abierto (UHP) y Claude Code con suscripción | Aceptada | 2026-10-29 |
