@@ -125,25 +125,26 @@ Objetivo: el **acto 1** de la [demo](demo/README.md), con un solo servicio real.
 
 Repo propio `platform-harness` en formatos abiertos ([ADR 0022](adr/0022-harness-repo-propio-formatos-abiertos.md)) ·
 distribución con APM y check `harness-ok` ([ADR 0023](adr/0023-apm-distribucion-harness-ok.md)) ·
-HarnessRouter en F4 con Anthropic, OpenRouter y modelo local ([ADR 0024](adr/0024-harnessrouter-en-f4-proveedores.md)).
+HarnessRouter en F4 ([ADR 0024](adr/0024-harnessrouter-en-f4-proveedores.md)) · **dos motores**: abierto (UHP con OpenRouter y Bonsai local) y Claude Code con la suscripción, solo en el Mac ([ADR 0025](adr/0025-dos-motores-un-harness.md)).
 Diseño completo: [lab/harness](lab/harness.md).
 
 | Paso | Capa | Qué | Estado |
 |---|---|---|---|
-| 08 | Setup | Repo `platform-harness`, claves de proveedores en 1Password, límites de gasto | ⚪ |
+| 08 | Setup | Repo `platform-harness`, Claude Code con la suscripción, clave de OpenRouter con límite, acceso a Bonsai ([doc](setup/paso-08-harness.md)) | 🟡 |
 | F4.1 | Lab | Contenido `harness-v0.1.0` (APM: instrucciones, skills, agentes, hooks; MCP de Port; corpus; OPA) | ⚪ |
 | F4.2 | Lab | Release firmada (`apm pack` + cosign + GitHub Release) | ⚪ |
 | F4.3 | Lab | `meridian-orders` consume el harness · `harness-ok` obligatorio | ⚪ |
 | F4.4 | Lab | PR automático de *upgrade* · versión mínima en OPA | ⚪ |
-| F4.5 | Lab | OpenSpec en `meridian-orders` · `openspec validate --strict` | ⚪ |
-| F4.6 | Lab | HarnessRouter CE en k3s con tres proveedores | ⚪ |
-| F4.7 | Lab | `harness-sync` a UHP · prueba de humo en tres combinaciones base + modelo | ⚪ |
+| F4.5 | Lab | OpenSpec en `meridian-orders` · `openspec validate --strict` · motor B de principio a fin en el Mac | ⚪ |
+| F4.6 | Lab | HarnessRouter CE en k3s con OpenRouter y Bonsai | ⚪ |
+| F4.7 | Lab | `harness-sync` a UHP · prueba de humo con OpenRouter y con Bonsai, comparada con el motor B | ⚪ |
 | F4.8 | Lab | Port: versión del harness por servicio y regla de scorecard | ⚪ |
 
 ### F5 · Enterprise Agent Platform
 - (HarnessRouter CE pasa a F4, [ADR 0024](adr/0024-harnessrouter-en-f4-proveedores.md).)
-- ARC (*Actions Runner Controller*) con runners efímeros.
-- Workflows `aidlc-propose` y `aidlc-implement`; 3 validadores agénticos en cada PR.
+- ARC (*Actions Runner Controller*) con runners efímeros para el motor A.
+- Workflow de Port «Pedir feature» con selector de motor: abierto → `aidlc-propose`/`aidlc-implement` en ARC vía UHP; Claude → *issue* `aidlc:claude` para `/feature` en el Mac ([ADR 0025](adr/0025-dos-motores-un-harness.md)).
+- Los validadores agénticos trabajan antes del PR; en el CI solo puertas deterministas (agentes en el CI: [playbook](demo/README.md#agentes-en-el-flujo-qué-se-podría-añadir)).
 - Agentes como entidades del catálogo de Port.
 
 ### F6 · Observabilidad

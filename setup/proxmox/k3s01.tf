@@ -123,8 +123,11 @@ resource "proxmox_virtual_environment_vm" "k3s01" {
     type = "serial0"
   }
 
+  # ssd y replicate como los dejó la plantilla 9013 al clonar (31-oct-2026):
+  # con default_replicate_value y sin ssd, el plan quería cambiarlos.
   disk {
-    replicate    = var.default_replicate_value
+    replicate    = true
+    ssd          = true
     datastore_id = var.default_disk_datastore_id
     file_format  = var.default_disk_file_format
     interface    = var.default_disk_interface
@@ -159,6 +162,13 @@ resource "proxmox_virtual_environment_vm" "k3s01" {
   clone {
     vm_id = var.k3s01_template_vm_id
     full  = var.default_clone_full
+  }
+
+  # La VM ya existe y se gestiona a mano (k3s, lab): Terraform no la cambia
+  # ni la destruye. Para tocarla de nuevo con Terraform, quita este bloque.
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes  = all
   }
 }
 
