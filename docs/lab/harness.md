@@ -93,7 +93,7 @@ sequenceDiagram
 
 | Paso | Qué | Motor | Estado |
 |---|---|---|---|
-| 08 (setup) | [Repo `platform-harness`](../setup/paso-08-harness.md) (rulesets de `main` y de tags), Claude Code con la suscripción, clave de OpenRouter con límite, acceso a Bonsai, credenciales y nombre de HarnessRouter, capacidad de k3s01 | A · B | 🟡 |
+| 08 (setup) | [Repo `platform-harness`](../setup/paso-08-harness.md) (rulesets de `main` y de tags), Claude Code con la suscripción, clave de OpenRouter con límite, acceso a Bonsai, credenciales y nombre de HarnessRouter, capacidad de k3s01 | A · B | ✅ 11-nov |
 | F4.1 | Contenido `harness-v0.1.0`: `apm.yml` + `.apm/` (portado de `platform-harness-lab`), MCP de Port, corpus, OPA · CI de validación | A · B | ⚪ |
 | F4.2 | Release firmada: `apm pack`, manifiesto, cosign, GitHub Release | A · B | ⚪ |
 | F4.3 | `meridian-orders` consume: `apm.yml`, `apm.lock.yaml`, ficheros generados · `harness-ok` obligatorio | A · B | ⚪ |
@@ -112,6 +112,7 @@ En F5: ARC para el motor A en CI y el workflow de Port «Pedir feature» con sel
   prueba de humo dirá si un 27B ternario aguanta un bucle agéntico (Q8); si no, Bonsai se queda para
   validadores cortos.
 - **HarnessRouter sin releases en GitHub:** versión de Docker Hub fijada por *digest*; manifiestos propios.
-- **Gasto:** límite en la clave de OpenRouter antes de F4.7. El motor B consume los límites del plan.
+- **Gasto:** clave de OpenRouter con 10 $ en total y 10 $ de saldo sin recarga automática. El motor B consume los límites del plan (Pro: features pequeñas en F4.5).
+- **Memoria de k3s01:** con HarnessRouter la suma de límites pasa del 100 %; una sesión de agente a la vez (paso 08, resultado).
 - **Motor B personal:** no escala a un equipo sin Team, Enterprise o clave de API; es una decisión de
   cada cliente.

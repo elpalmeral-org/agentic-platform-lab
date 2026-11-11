@@ -33,7 +33,7 @@ flowchart TD
 | [05 · Bootstrap GitOps](paso-05-bootstrap-gitops.md) | Mac + k3s01 | 30 min | 🟢 | ✅ |
 | [06 · GitHub App](paso-06-github-app.md) | Navegador + Mac (`gh`, `op`) | 30 min | 🟢 | ✅ |
 | [07 · Port como código](paso-07-port.md) | Mac (`aws`, `gh`, `op`) + navegador | 30 min | 🟢 | ✅ |
-| [08 · Harness](paso-08-harness.md) | Mac (`gh`, `op`, `kubectl`) + navegador | 40 min | 🟢 (gasto con límite) | 🟡 en curso |
+| [08 · Harness](paso-08-harness.md) | Mac (`gh`, `op`, `kubectl`) + navegador | 40 min | 🟢 (gasto con límite) | ✅ 11-nov |
 
 ## Cómo está escrito cada paso
 
