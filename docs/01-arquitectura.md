@@ -15,7 +15,8 @@ flowchart TB
     subgraph SAAS["Internet · SaaS"]
         PORT["Port.io<br/>IDP (Free · región EU)"]
         GH["GitHub<br/>org pública · Actions · GHCR"]
-        ANT["API Anthropic<br/>Claude"]
+        ORT["OpenRouter<br/>modelos abiertos y comerciales"]
+        ANT["Anthropic<br/>Claude (suscripción)"]
     end
 
     subgraph HOME["Homelab · LAN"]
@@ -24,6 +25,7 @@ flowchart TB
                 DNS["Technitium DNS"]
                 OBS["obs-stack<br/>OTel · ClickHouse · Grafana"]
                 TRF["Traefik"]
+                LLM["Bonsai · llama.cpp<br/>RTX 5060 Ti"]
             end
             subgraph K["k3s01 · VM nueva"]
                 ARGO["Argo CD"]
@@ -40,7 +42,9 @@ flowchart TB
     CLI -.-> PABLO
     ARGO -->|pull HTTPS| GH
     ARC -->|long-poll HTTPS| GH
-    HR -->|HTTPS| ANT
+    HR -->|HTTPS| ORT
+    HR -->|"HTTP · LAN"| LLM
+    PABLO -->|"Claude Code (motor B)"| ANT
     EXP -->|push HTTPS| PORT
     PORT -->|dispara workflows| GH
     K -->|OTLP| OBS
@@ -49,7 +53,8 @@ flowchart TB
 
 **Principio de red: todo sale, nada entra.** Ninguna pieza del homelab necesita estar expuesta a
 Internet: Argo CD *tira* de GitHub, los runners ARC hacen *long-poll* a GitHub, el exporter de Port
-*empuja* a Port y HarnessRouter *llama* a Anthropic. Port solo habla con GitHub, nunca con el
+*empuja* a Port y HarnessRouter *llama* a OpenRouter (y, dentro de la LAN, al modelo local de
+docker01). Claude Code llama a Anthropic desde el Mac, con la suscripción ([ADR 0025](adr/0025-dos-motores-un-harness.md)). Port solo habla con GitHub, nunca con el
 clúster. La demo se conduce desde el Mac por VPN.
 
 ```mermaid
@@ -60,10 +65,12 @@ flowchart LR
     end
     GH["GitHub"]
     PORT["Port.io"]
+    ORT["OpenRouter"]
     ANT["Anthropic"]
     K3S -- "saliente 443" --> GH
     K3S -- "saliente 443" --> PORT
-    K3S -- "saliente 443" --> ANT
+    K3S -- "saliente 443" --> ORT
+    MAC -- "saliente 443<br/>Claude Code" --> ANT
     PORT -- "API" --> GH
     MAC -- "LAN" --> K3S
     INET(("Internet")) -. "❌ sin puertos abiertos" .-x K3S
@@ -135,6 +142,9 @@ aislamiento por políticas, y es lo que cabe en un nodo.
 
 ## 4. Flujo AIDLC de extremo a extremo
 
+Un harness, dos motores ([ADR 0025](adr/0025-dos-motores-un-harness.md)): la petición entra por Port y
+sigue una de dos ramas; desde el PR, el camino es el mismo.
+
 ```mermaid
 sequenceDiagram
     autonumber
@@ -143,32 +153,38 @@ sequenceDiagram
     participant GA as GitHub Actions
     participant R as Runner ARC (k3s)
     participant U as HarnessRouter (UHP)
-    participant C as Claude
+    actor D as Pablo · Claude Code
     participant A as meridian-orders
     actor H as Humano revisor
     participant O as platform-gitops
     participant AR as Argo CD
 
-    N->>P: "Pedir feature" (lenguaje natural)
-    P->>GA: workflow_dispatch aidlc-propose
-    GA->>R: job en runner efímero
-    R->>U: POST /v1/responses (harness spec-writer)
-    U->>C: tarea con grounding
-    C-->>U: cambio OpenSpec
-    R->>A: PR con la spec
+    N->>P: "Pedir feature" (lenguaje natural · motor)
+    alt Motor A · abierto
+        P->>GA: workflow_dispatch aidlc-propose
+        GA->>R: job en runner efímero
+        R->>U: POST /v1/responses (meridian/spec-writer@X.Y.Z)
+        U-->>R: cambio OpenSpec (OpenRouter o Bonsai local)
+        R->>A: PR con la spec
+    else Motor B · Claude
+        P->>A: issue con etiqueta aidlc:claude
+        D->>A: /feature #issue (subagente spec-writer) → PR con la spec
+    end
     H->>A: 🧑‍⚖️ Puerta 1: aprueba la spec
-    A->>GA: aidlc-implement
-    GA->>R: job en runner efímero
-    R->>U: POST /v1/responses (harness implementer)
-    U->>C: implementar contra la spec
-    R->>A: PR con el código
-    A->>GA: gates deterministas (runners de GitHub)
-    A->>GA: gates agénticos (runner ARC → UHP)
+    alt Motor A
+        A->>GA: aidlc-implement
+        GA->>R: job en runner efímero
+        R->>U: implementer + validadores (antes del PR)
+        R->>A: PR con el código
+    else Motor B
+        D->>A: implementer + validadores como subagentes → PR con el código
+    end
+    A->>GA: puertas deterministas: harness-ok · openspec · tests (runners de GitHub)
     H->>A: 🧑‍⚖️ Puerta 2: aprueba el merge
     A->>GA: build · SBOM · cosign → GHCR
     GA->>O: PR de promoción a dev
     O->>AR: merge → reconcilia
-    AR-->>P: estado del despliegue (Ocean)
+    AR-->>P: estado del despliegue
 ```
 
 ## 5. Dónde corre cada tipo de job

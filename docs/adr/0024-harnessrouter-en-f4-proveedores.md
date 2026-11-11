@@ -1,6 +1,6 @@
 # ADR 0024 · HarnessRouter llega en F4 y aloja el harness por rol y versión; tres proveedores
 
-- **Estado:** Aceptada · 2026-10-28 · desarrolla la [ADR 0006](0006-uhp-harnessrouter-gateway.md) y resuelve su última consecuencia (versionar la configuración)
+- **Estado:** Aceptada · 2026-10-28 · desarrolla la [ADR 0006](0006-uhp-harnessrouter-gateway.md) y resuelve su última consecuencia (versionar la configuración) · **modificada por la [ADR 0025](0025-dos-motores-un-harness.md)**: HarnessRouter sin Anthropic (Claude llega por Claude Code con suscripción)
 
 ## Contexto
 
