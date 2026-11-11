@@ -140,19 +140,25 @@ usaría antes que la suscripción.
 
 En <https://openrouter.ai>:
 
-1. **Settings › Credits** → añade `10 $`.
-2. **Settings › Privacy**: desactiva los proveedores que puedan **entrenar con tus datos** y, si
-   aparece, activa **solo endpoints con retención cero** (*Zero Data Retention*). Es el argumento
-   que pedirá el CISO: cuando el trabajo sale a un modelo de terceros, decides a cuáles.
-3. **Settings › Keys › Create key** → nombre `harnessrouter-k3s01`, **Credit limit** `10 $`.
-
-> **Sin modelos de Anthropic en el motor A** ([ADR 0025](../adr/0025-dos-motores-un-harness.md)): la regla la
-> aplica `uhp/roles.yaml`, con un test en F4.1. Si en los ajustes de OpenRouter puedes **ignorar
-> proveedores**, añade Anthropic como defensa extra.
+1. **Settings › Privacy** (es el argumento que pedirá el CISO: cuando el trabajo sale a un modelo
+   de terceros, decides a cuáles):
+   - *Zero Data Retention* › **All other models** activado, en modo **Allow Safety Retention**
+     (retención solo antiabuso, nunca para entrenar). *ZDR only* es más estricto, pero deja fuera,
+     por ejemplo, los modelos abiertos en Vertex.
+   - *Data Training*: **todo desactivado** (la opción «Allow free endpoints that train on request
+     data» viene activada de serie).
+   - *Model authors* › **Blocked Authors: Anthropic**. Defensa extra de la regla «sin modelos de
+     Anthropic en el motor A» ([ADR 0025](../adr/0025-dos-motores-un-harness.md)), que aplica
+     `uhp/roles.yaml` con un test en F4.1.
+2. **Settings › Keys**: borra la «Default key» si nunca la has usado y crea **una** clave:
+   nombre `harnessrouter-k3s01`, **Credit limit** *Custom* `10` (en total, sin *Reset limit*),
+   **Expiration** 180 días (obliga a rotarla). Pulsa *Create* tú y cópiala sin que pase por ningún chat.
+3. **Settings › Credits** → añade `10 $`. Sin medio de pago guardado, la recarga automática queda
+   desactivada: el gasto no puede pasar de lo cargado.
 
 ```bash
 op item create --vault agentic-lab --category "API Credential" --title openrouter-api \
-  "credential[password]=$(pbpaste)" "uso[text]=HarnessRouter (k3s01)" >/dev/null \
+  "credential[password]=$(pbpaste)" "uso[text]=HarnessRouter (k3s01) · motor A" "caduca[text]=<fecha>" >/dev/null \
   && echo "✅ en 1Password"; pbcopy </dev/null
 ```
 
@@ -240,6 +246,8 @@ un límite distinto de `null` y la IP de k3s01.
 | Síntoma | Causa | Arreglo |
 |---|---|---|
 | `Validation Failed` al crear `tags-harness` | `actor_id` no válido en tu org | Créalo en la UI (*New tag ruleset*) con *Bypass list › Repository admin* |
+| `Name must be unique` al crear un ruleset | Ya lo creaste en una ejecución anterior | Nada: compruébalo con `gh api repos/$R/rulesets` |
+| `/key` de OpenRouter devuelve como nombre `sk-or-v1-…` | La API muestra el prefijo de la clave, no su nombre | Normal; el nombre se ve en *Settings › Keys* |
 | `/status` muestra una clave de API | Hay una `ANTHROPIC_API_KEY` en el entorno o aprobada en `/config` | `unset ANTHROPIC_API_KEY`, quítala del perfil de la shell y desactiva *Use custom API key* en `/config` |
 | OpenRouter muestra `limite: null` | La clave se creó sin *Credit limit* | Edita la clave y pon el límite |
 | El pod no resuelve `docker01…` | CoreDNS no reenvía el dominio de la LAN | Prueba con la IP; si funciona, se arregla en F4.6 con un `Service` *ExternalName* o un `Endpoints` |
@@ -253,6 +261,26 @@ for i in openrouter-api harnessrouter; do op item delete $i --vault agentic-lab;
 ```
 
 Revoca también la clave en la consola de OpenRouter.
+
+## Resultado (11-nov-2026) ✅
+
+| Sub-paso | Resultado |
+|---|---|
+| 8.1 | `platform-harness` público, **Apache-2.0**, solo *squash*, rama borrada al fusionar · rulesets `main` y `tags-harness` activos · **releases inmutables** activadas |
+| 8.2 | Claude Code 2.1.236 · `Login method: Claude Pro account` · sin `ANTHROPIC_*` en el entorno |
+| 8.3 | OpenRouter: ZDR (con *Safety Retention*), sin entrenamiento, **Anthropic bloqueado** (483 modelos elegibles) · una sola clave `harnessrouter-k3s01`: 10 $ en total, caduca el 11-may-2027 · 10 $ de saldo, sin recarga automática · `agentic-lab/openrouter-api` |
+| 8.4 | Un pod de k3s01 llega a `llama.cpp` de docker01 **por nombre** (sin tocar CoreDNS) · `bonsai`, contexto 64K compartido · *tool calling* correcto (`finish: tool_calls`, `get_time({"city":"Madrid"})`) en **2,8 s** |
+| 8.5 | `agentic-lab/harnessrouter`: usuario `pablo`, contraseña de 32, `secret_key` de 64 · `uhp.apl.<dominio>` resuelve a k3s01 |
+| 8.6 | k3s01 en reposo: CPU 3 % · memoria **4,1 GiB usados (48 %)**, 6,1 GiB disponibles en la VM · *requests* 1 CPU / 2,1 GiB, **límites 7 GiB (81 %)** · disco 6,6 de 79 GB (69 libres), 4,3 GB de imágenes |
+
+**Lo que implica para F4.6 (HarnessRouter):**
+- Memoria: *request* 1 GiB y límite 3 GiB. Con eso, la suma de límites pasa del 100 % (~116 %): se
+  admite en un lab de una sola sesión a la vez, vigilando OOM. Ampliar k3s01 queda como opción, no
+  como requisito (Terraform no toca k3s01).
+- Disco: volumen de 15 GiB (`local-path`); sobra espacio.
+- `HR_BACKENDS` mínimo: solo las bases del motor A (OpenRouter: `opencode`, `vibe`; Bonsai: `vibe`,
+  `fast-agent`). Ni `claude` ni el resto: menos disco, menos superficie.
+- Una sesión de agente a la vez.
 
 ## 📣 Qué tienes que confirmarme
 

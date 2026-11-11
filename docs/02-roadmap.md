@@ -130,7 +130,7 @@ Diseño completo: [lab/harness](lab/harness.md).
 
 | Paso | Capa | Qué | Estado |
 |---|---|---|---|
-| 08 | Setup | Repo `platform-harness`, Claude Code con la suscripción, clave de OpenRouter con límite, acceso a Bonsai ([doc](setup/paso-08-harness.md)) | 🟡 |
+| 08 | Setup | Repo `platform-harness`, Claude Code con la suscripción, clave de OpenRouter con límite, acceso a Bonsai ([doc](setup/paso-08-harness.md)) | ✅ 11-nov |
 | F4.1 | Lab | Contenido `harness-v0.1.0` (APM: instrucciones, skills, agentes, hooks; MCP de Port; corpus; OPA) | ⚪ |
 | F4.2 | Lab | Release firmada (`apm pack` + cosign + GitHub Release) | ⚪ |
 | F4.3 | Lab | `meridian-orders` consume el harness · `harness-ok` obligatorio | ⚪ |
