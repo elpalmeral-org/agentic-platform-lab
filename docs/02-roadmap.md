@@ -133,7 +133,7 @@ Diseño completo: [lab/harness](lab/harness.md).
 | 08 | Setup | Repo `platform-harness`, Claude Code con la suscripción, clave de OpenRouter con límite, acceso a Bonsai ([doc](setup/paso-08-harness.md)) | ✅ 11-nov |
 | F4.1 | Lab | Contenido `harness-v0.1.0` (APM: instrucciones, skills, agentes, hooks; MCP de Port; corpus; OPA; `uhp/roles.yaml`; CI obligatorio [ADR 0026](adr/0026-ci-obligatorio-platform-harness.md)) | ✅ 13-nov |
 | F4.2 | Lab | Release firmada `harness-v0.1.0` (`apm pack` + cosign keyless + GitHub Release, [ADR 0027](adr/0027-release-firmada-platform-harness.md)) | ✅ 13-nov |
-| F4.3 | Lab | `meridian-orders` consume el harness · `harness-ok` obligatorio | ⚪ |
+| F4.3 | Lab | `meridian-orders` consume el harness (pin por SHA, `harness-v0.1.1`) · `harness-ok` obligatorio ([ADR 0028](adr/0028-excepcion-adopcion-inicial-harness.md)) | ✅ 13-nov |
 | F4.4 | Lab | PR automático de *upgrade* · versión mínima en OPA | ⚪ |
 | F4.5 | Lab | OpenSpec en `meridian-orders` · `openspec validate --strict` · motor B de principio a fin en el Mac | ⚪ |
 | F4.6 | Lab | HarnessRouter CE en k3s con OpenRouter y Bonsai | ⚪ |
