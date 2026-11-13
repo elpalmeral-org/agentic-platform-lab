@@ -31,3 +31,4 @@ decisión, se escribe otra que la sustituye.
 | [0024](0024-harnessrouter-en-f4-proveedores.md) | HarnessRouter llega en F4 y aloja el harness por rol y versión; tres proveedores | Aceptada · modificada por 0025 | 2026-10-28 |
 | [0025](0025-dos-motores-un-harness.md) | Un harness, dos motores: abierto (UHP) y Claude Code con suscripción | Aceptada | 2026-10-29 |
 | [0026](0026-ci-obligatorio-platform-harness.md) | CI obligatorio de `platform-harness`: `apm-cli` por pip, un único check `validate-ok` | Aceptada | 2026-11-13 |
+| [0027](0027-release-firmada-platform-harness.md) | Release firmada de `platform-harness`: bundle `claude-plugin`, firma keyless con la identidad del workflow | Aceptada | 2026-11-13 |
