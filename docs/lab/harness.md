@@ -101,7 +101,7 @@ sequenceDiagram
 | F4.5 | **Prueba del motor B**: `/feature` de principio a fin en el Mac, feature real (`filtrar-pedidos-por-email`, [PR #28](https://github.com/elpalmeral-org/meridian-orders/pull/28)/[#30](https://github.com/elpalmeral-org/meridian-orders/pull/30)/[#31](https://github.com/elpalmeral-org/meridian-orders/pull/31)) | B | ✅ 13-nov |
 | F4.6 | HarnessRouter CE en k3s (addon GitOps, ESO, TLS, [ADR 0030](../adr/0030-harnessrouter-ce-despliegue-k3s.md)); sin OpenRouter/Bonsai todavía, eso es F4.7 | A | ✅ 13-nov |
 | F4.7 | `harness-sync` (release → `meridian/<rol>@X.Y.Z`) · prueba de humo: un mandato con OpenRouter y con Bonsai, comparado con el motor B | A | ⚪ |
-| F4.8 | Port: release del harness y versión por servicio · regla «harness al día y sin *drift*» | A · B | ⚪ |
+| F4.8 | Port: blueprint `harness_status` por servicio (versión, sin *drift*, firma, versión mínima) · scorecard `harness_governance` (Gold en `meridian-orders`) | A · B | ✅ 13-nov |
 
 En F5: ARC para el motor A en CI y el workflow de Port «Pedir feature» con selector de motor.
 
