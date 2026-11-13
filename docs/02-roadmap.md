@@ -138,7 +138,7 @@ Diseño completo: [lab/harness](lab/harness.md).
 | F4.5 | Lab | Motor B de principio a fin en el Mac: `/feature` real (`filtrar-pedidos-por-email`), con un ciclo PROPOSE→IMPLEMENT→validadores→PROPOSE de nuevo tras un hallazgo real de `security-gate` | ✅ 13-nov |
 | F4.6 | Lab | HarnessRouter CE en k3s (`StatefulSet`, imagen por digest, [ADR 0030](adr/0030-harnessrouter-ce-despliegue-k3s.md)); sin proveedores todavía | ✅ 13-nov |
 | F4.7 | Lab | `harness-sync` a UHP · prueba de humo con OpenRouter y con Bonsai, comparada con el motor B | ⚪ |
-| F4.8 | Lab | Port: versión del harness por servicio y regla de scorecard | ⚪ |
+| F4.8 | Lab | Port: versión del harness por servicio y scorecard `harness_governance` (blueprint `harness_status`) | ✅ 13-nov |
 
 ### F5 · Enterprise Agent Platform
 - (HarnessRouter CE pasa a F4, [ADR 0024](adr/0024-harnessrouter-en-f4-proveedores.md).)
