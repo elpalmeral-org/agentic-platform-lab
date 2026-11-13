@@ -31,7 +31,7 @@ flowchart LR
 | F4 | Lab | El harness corporativo es un producto versionado y firmado, agnóstico del modelo: lo consumen los repos (APM) y el gateway UHP | 🟡 diseñada 28-oct |
 | F5 | Lab | Un agente lleva una feature de la petición al PR, a través de UHP, con puertas humanas | ⚪ |
 | F6 | Lab | Cada ejecución de agente es trazable y tiene coste visible en Grafana y en Port | 🟡 F6.2 ✅, F6.1 pendiente de una CVE ajena |
-| F7 | Demo | Guion de 30-45 min reproducible y *reset* en menos de 10 min | ⚪ |
+| F7 | Demo | Guion de 30-45 min reproducible y *reset* en menos de 10 min | ✅ 13-nov |
 
 ## 2. Fase 0 · Setup (detalle)
 
@@ -205,9 +205,24 @@ propósito).
 - ⏭️ *Dashboard* de Grafana dedicado para `meridian-orders`: cambio de `docker01`/
   `homelab-containers`, fuera de alcance de este repo por ahora.
 
-### F7 · Demo kit
-- Guion, prompts, escenarios (feature feliz, spec rechazada, gate que bloquea, rollback).
-- *Reset*: snapshot de k3s01 + Argo CD + limpieza de PR/ramas.
+### F7 · Demo kit (ADR 0034)
+- ✅ 13-nov · [`docs/demo/guion.md`](demo/guion.md): tres actos minuto a minuto, con lo que es real
+  hoy — el acto 2 en directo usa el motor B (único con un ciclo completo probado, F4.5); el motor
+  abierto se muestra conectado y con coste real (F4.7), sin fingir un PR autónomo que no existe.
+- ✅ 13-nov · [`docs/demo/prompts.md`](demo/prompts.md): peticiones ya ejecutadas de verdad, con
+  su resultado real (no hipotético).
+- ✅ 13-nov · [`docs/demo/checklist-previo.md`](demo/checklist-previo.md): comprobaciones contra
+  el estado real (PR de *release* abierto, `publish.yml` en verde para los dos *apps*, remanente
+  de OpenRouter, Bonsai libre).
+- ✅ 13-nov · **Corrección real al diseño de octubre**: el *reset* ya NO vuelve al *snapshot*
+  `k3s-baseline` de Proxmox — ese *snapshot* es de antes de instalar Argo CD/HarnessRouter/ARC;
+  rebobinarlo borraría la plataforma entera. `docs/demo/reset.md` +
+  [`scripts/demo-reset.sh`](../scripts/demo-reset.sh) (de solo lectura: lista lo que ensucia una
+  demo — *issues*, ramas, cambios de OpenSpec sin archivar, *harnesses* de prueba — y da el
+  comando exacto; no borra nada por su cuenta). Al ejecutarlo de verdad encontró un cambio de F6.1
+  (`instrumentar-otel-backend`) sin archivar aunque su PR ya estaba fusionado — corregido.
+- ✅ 13-nov · [`docs/demo/faq-cliente.md`](demo/faq-cliente.md): preguntas habituales con un hecho
+  real detrás de cada respuesta, no una afirmación de folleto.
 
 ## 4. Preguntas abiertas
 
