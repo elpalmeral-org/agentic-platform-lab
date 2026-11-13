@@ -10,10 +10,11 @@ una nueva `harness-vX.Y.Z`, un *workflow* actualice el pin en cada repo consumid
 persona edite `apm.yml`/`apm.lock.yaml` a mano. Para que el PR lo abra de verdad esa identidad
 (y no `github-actions[bot]`, que no coincide con la constante `platform_bot` y caería en el *deny*
 genérico), el *workflow* necesita un token de instalación de la GitHub App
-(`actions/create-github-app-token`, [ADR 0014](0014-github-app-platform-bot.md)) — y esa App solo
-tenía instalado el repo `platform-gitops`. Ampliar su acceso a `meridian-orders` **no se puede
-hacer con un token personal de usuario**: solo desde la web de GitHub (org → Settings → GitHub
-Apps → Configure), lo hace Pablo.
+(`actions/create-github-app-token`, [ADR 0014](0014-github-app-platform-bot.md)). Comprobado al
+implementar esto: la App **ya estaba instalada en `meridian-orders`** desde antes (la usan
+`release-please.yml` y `_promote.yml`, con `repositories: meridian-orders` acotado en el propio
+paso) — la ADR 0014 documenta el alcance inicial (solo `platform-gitops`), pero se amplió después
+sin dejarlo anotado ahí. Nada que ampliar para este paso.
 
 Dos formas de disparar el *workflow* de *upgrade*:
 - **Push:** `platform-harness` manda un `repository_dispatch` a cada consumidor al publicar una
@@ -41,9 +42,9 @@ Dos formas de disparar el *workflow* de *upgrade*:
 2. **`minimum_harness_version` en OPA sigue sin automatizar.** Subirlo es una decisión deliberada
    («obligar a todo el parque a actualizar antes de tal fecha»), no algo que un *cron* deba decidir
    por su cuenta.
-3. **Alcance de la App ampliado solo a lo necesario:** `meridian-orders`, permisos ya acotados por
-   ADR 0014 (contenidos y *pull requests* de ese repo, nada más). Si en el futuro hay más repos
-   consumidores, cada uno repite el mismo *workflow* y pide su propia ampliación de alcance.
+3. **Si en el futuro hay más repos consumidores** que todavía no tengan la App instalada, cada uno
+   repetiría este mismo *workflow* y pediría su propia ampliación de alcance (eso sí requeriría la
+   web de GitHub, por un admin de la org).
 
 ## Consecuencias
 
@@ -54,6 +55,7 @@ Dos formas de disparar el *workflow* de *upgrade*:
 - ⚠️ Con *cron* diario, puede haber hasta 24 h entre una release y su PR de *upgrade* (aceptable:
   no hay SLA de seguridad que lo exija; `workflow_dispatch` cubre la demo donde haga falta
   inmediatez).
-- ⚠️ Cada repo consumidor nuevo exige el mismo paso manual de ampliar la instalación de la App:
-  **no se automatiza la propia ampliación de permisos** de una identidad automatizada — es,
-  deliberadamente, la única parte de este mecanismo que sigue pidiendo una persona.
+- ⚠️ Un repo consumidor nuevo que no tenga ya la App instalada exige ese paso manual (web de
+  GitHub, un admin de la org): **no se automatiza la ampliación de permisos** de una identidad
+  automatizada — es, deliberadamente, la única parte de este mecanismo que seguiría pidiendo una
+  persona.
