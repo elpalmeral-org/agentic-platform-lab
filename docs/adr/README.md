@@ -34,3 +34,4 @@ decisión, se escribe otra que la sustituye.
 | [0027](0027-release-firmada-platform-harness.md) | Release firmada de `platform-harness`: bundle `claude-plugin`, firma keyless con la identidad del workflow | Aceptada | 2026-11-13 |
 | [0028](0028-excepcion-adopcion-inicial-harness.md) | Excepción visible para la adopción inicial del harness: etiqueta `harness-adopt` | Aceptada | 2026-11-13 |
 | [0029](0029-pr-automatico-upgrade-harness.md) | PR automático de *upgrade* del harness: el bot, por sondeo, no por *dispatch* | Aceptada | 2026-11-13 |
+| [0030](0030-harnessrouter-ce-despliegue-k3s.md) | HarnessRouter CE en k3s01: `StatefulSet`, imagen por digest, sin configurar proveedores todavía | Aceptada | 2026-11-13 |
