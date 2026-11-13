@@ -19,6 +19,9 @@ concurrency:
 jobs:
   openrouter-usage:
     runs-on: ubuntu-latest
+    # PORT_CLIENT_ID/SECRET son secretos del entorno "port" (igual que port.yml), no del repo:
+    # sin esto, port-entity no ve nada ("sin credenciales de Port: no se registra nada").
+    environment: port
     steps:
       - name: GET /v1/key
         id: key
