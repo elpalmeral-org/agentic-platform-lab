@@ -135,7 +135,7 @@ Diseño completo: [lab/harness](lab/harness.md).
 | F4.2 | Lab | Release firmada `harness-v0.1.0` (`apm pack` + cosign keyless + GitHub Release, [ADR 0027](adr/0027-release-firmada-platform-harness.md)) | ✅ 13-nov |
 | F4.3 | Lab | `meridian-orders` consume el harness (pin por SHA, `harness-v0.1.1`) · `harness-ok` obligatorio ([ADR 0028](adr/0028-excepcion-adopcion-inicial-harness.md)) | ✅ 13-nov |
 | F4.4 | Lab | PR automático de *upgrade* del bot, por sondeo ([ADR 0029](adr/0029-pr-automatico-upgrade-harness.md)) | ✅ 13-nov |
-| F4.5 | Lab | OpenSpec en `meridian-orders` · `openspec validate --strict` · motor B de principio a fin en el Mac | ⚪ |
+| F4.5 | Lab | Motor B de principio a fin en el Mac: `/feature` real (`filtrar-pedidos-por-email`), con un ciclo PROPOSE→IMPLEMENT→validadores→PROPOSE de nuevo tras un hallazgo real de `security-gate` | ✅ 13-nov |
 | F4.6 | Lab | HarnessRouter CE en k3s con OpenRouter y Bonsai | ⚪ |
 | F4.7 | Lab | `harness-sync` a UHP · prueba de humo con OpenRouter y con Bonsai, comparada con el motor B | ⚪ |
 | F4.8 | Lab | Port: versión del harness por servicio y regla de scorecard | ⚪ |
