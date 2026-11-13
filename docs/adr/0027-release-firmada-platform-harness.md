@@ -41,9 +41,11 @@ aclarar antes de automatizarlo:
    queda con el *subject* `https://github.com/elpalmeral-org/platform-harness/.github/workflows/release.yml@refs/tags/<tag>`,
    no un correo personal. Dispara con `on: push: tags: harness-v*`; solo un admin puede crear ese
    tag (ruleset `tags-harness`, ya existente desde el paso 08).
-3. **Manifiesto** `manifest.json`: `{tag, commit, digest (sha256 del .zip), format, archive}`. Se
-   publica junto al `.zip`, la firma (`.sig`) y el certificado (`.pem`) como *assets* de una
-   **GitHub Release**, inmutable.
+3. **Manifiesto** `manifest.json`: `{tag, commit, digest (sha256 del .zip), format, archive,
+   signature}`. Se publica junto al `.zip` y el *bundle* de firma (`<archivo>.sigstore.json`: firma
+   + certificado + prueba del log de transparencia, formato moderno de `cosign sign-blob --bundle`;
+   los flags separados `--output-signature`/`--output-certificate` están obsoletos) como *assets*
+   de una **GitHub Release**, inmutable.
 4. **Puerta previa a empaquetar:** el workflow repite `apm install/compile --dry-run`, `opa test` y
    `pytest` (los mismos tres de `validate.yml`, [ADR 0026](0026-ci-obligatorio-platform-harness.md))
    y comprueba que el tag coincide con la `version:` de `apm.yml` antes de firmar nada. No depende
@@ -51,10 +53,10 @@ aclarar antes de automatizarlo:
    commit, así que la release repite las comprobaciones por su cuenta.
 5. **Contrato de verificación para quien consuma el harness** (lo implementa F4.3, `harness-ok`):
    ```
-   cosign verify-blob \
+   cosign verify-blob --bundle <archivo>.sigstore.json \
      --certificate-identity-regexp 'https://github.com/elpalmeral-org/platform-harness/.github/workflows/release.yml@.*' \
      --certificate-oidc-issuer https://token.actions.githubusercontent.com \
-     --signature <archivo>.sig --certificate <archivo>.pem <archivo>
+     <archivo>
    ```
    El check `harness-signature` de `pr_gates.rego` (ya existente) pasa a `success` cuando esta
    verificación pasa para la versión fijada en `apm.lock.yaml`.
