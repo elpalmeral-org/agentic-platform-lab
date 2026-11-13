@@ -135,3 +135,46 @@ resource "port_scorecard" "promotion_gates" {
     },
   ]
 }
+
+# --- ¿El servicio usa el harness corporativo y está al día? (F4.8) ---
+resource "port_scorecard" "harness_governance" {
+  blueprint  = port_blueprint.harness_status.identifier
+  identifier = "harness_governance"
+  title      = "Harness al día"
+
+  rules = [
+    {
+      identifier  = "uses_harness"
+      title       = "Usa el harness corporativo"
+      description = "apm.yml/apm.lock.yaml fijan elpalmeral-org/platform-harness"
+      level       = "Bronze"
+      query = {
+        combinator = "and"
+        conditions = [jsonencode(merge(local.not_empty, { property = "version" }))]
+      }
+    },
+    {
+      identifier  = "no_drift_signed"
+      title       = "Sin drift y release firmada"
+      description = "apm audit --ci pasa y cosign verifica la release fijada en apm.lock.yaml"
+      level       = "Silver"
+      query = {
+        combinator = "and"
+        conditions = [
+          jsonencode(merge(local.is_true, { property = "audit_ok" })),
+          jsonencode(merge(local.is_true, { property = "signature_ok" })),
+        ]
+      }
+    },
+    {
+      identifier  = "min_version"
+      title       = "Versión mínima exigida"
+      description = "La versión fijada cumple minimum_harness_version de pr_gates.rego"
+      level       = "Gold"
+      query = {
+        combinator = "and"
+        conditions = [jsonencode(merge(local.is_true, { property = "min_version_ok" }))]
+      }
+    },
+  ]
+}
