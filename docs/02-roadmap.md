@@ -30,7 +30,7 @@ flowchart LR
 | F3 | Lab | Port refleja repos, despliegues y entornos; *self-service* con Workflows operativo | ✅ 28-oct |
 | F4 | Lab | El harness corporativo es un producto versionado y firmado, agnóstico del modelo: lo consumen los repos (APM) y el gateway UHP | 🟡 diseñada 28-oct |
 | F5 | Lab | Un agente lleva una feature de la petición al PR, a través de UHP, con puertas humanas | ⚪ |
-| F6 | Lab | Cada ejecución de agente es trazable y tiene coste visible en Grafana y en Port | ⚪ |
+| F6 | Lab | Cada ejecución de agente es trazable y tiene coste visible en Grafana y en Port | 🟡 F6.2 ✅, F6.1 pendiente de una CVE ajena |
 | F7 | Demo | Guion de 30-45 min reproducible y *reset* en menos de 10 min | ⚪ |
 
 ## 2. Fase 0 · Setup (detalle)
@@ -190,10 +190,15 @@ propósito).
   **Pendiente de desplegarse a `meridian-dev`**: la promoción está bloqueada por una CVE crítica
   nueva en la imagen base del frontend (`zlib`, no relacionada), ajena a este cambio — pendiente de
   reintentar cuando la imagen base se reconstruya en origen.
-- 🟡 13-nov · **F6.2** — blueprint `openrouter_usage` en Port + *workflow* programado
-  `openrouter-usage.yml` (lee `GET /v1/key`, solo lectura, no gasta el presupuesto) desplegados.
-  **Pendiente**: crear el secreto `OPENROUTER_API_KEY` en GitHub Actions (`agentic-platform-lab`)
-  para que el *workflow* pueda autenticarse.
+- ✅ 13-nov · **F6.2 cerrado** — blueprint `openrouter_usage` en Port + *workflow* programado
+  `openrouter-usage.yml` (lee `GET /v1/key`, solo lectura, no gasta el presupuesto). Dos fallos
+  reales encontrados al ejecutarlo de verdad (no al diseñarlo): el JSON de la entidad salía en
+  varias líneas y `$GITHUB_OUTPUT` exige un valor por línea (arreglado con `jq -c`); y
+  `PORT_CLIENT_ID`/`PORT_CLIENT_SECRET` son secretos del *environment* `port` de GitHub, no del
+  repo — sin `environment: port` en el job, `port-entity` no veía nada, sin fallar el *job*
+  (comprobado que ese *environment* no tiene reglas de protección, seguro para el *cron* diario).
+  **Verificado de verdad vía MCP de Port**: entidad `harnessrouter-k3s01` con `usage: 0.0135`,
+  `limit: 10`, `limit_remaining: 9.9865`.
 - ⏭️ El puente HarnessRouter → OTel sigue sin construirse: F4.7 (cerrado 13-nov) ya deja
   ejecuciones reales que trazar (`GET /v1/traces/{session}/all`), pero escribir ese *poll* → *push*
   OTLP no se hizo en esta sesión; queda en el *backlog*, no bloqueado.
