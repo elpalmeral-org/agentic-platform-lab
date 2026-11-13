@@ -137,8 +137,21 @@ Diseño completo: [lab/harness](lab/harness.md).
 | F4.4 | Lab | PR automático de *upgrade* del bot, por sondeo ([ADR 0029](adr/0029-pr-automatico-upgrade-harness.md)) | ✅ 13-nov |
 | F4.5 | Lab | Motor B de principio a fin en el Mac: `/feature` real (`filtrar-pedidos-por-email`), con un ciclo PROPOSE→IMPLEMENT→validadores→PROPOSE de nuevo tras un hallazgo real de `security-gate` | ✅ 13-nov |
 | F4.6 | Lab | HarnessRouter CE en k3s (`StatefulSet`, imagen por digest, [ADR 0030](adr/0030-harnessrouter-ce-despliegue-k3s.md)); sin proveedores todavía | ✅ 13-nov |
-| F4.7 | Lab | `harness-sync` a UHP · prueba de humo con OpenRouter y con Bonsai, comparada con el motor B | ⚪ |
+| F4.7 | Lab | `harness-sync` a UHP · prueba de humo con OpenRouter y con Bonsai, comparada con el motor B | ✅ 13-nov |
 | F4.8 | Lab | Port: versión del harness por servicio y scorecard `harness_governance` (blueprint `harness_status`) | ✅ 13-nov |
+
+**F4.7, detalle** ([ADR 0033](adr/0033-f4-7-harness-sync-prueba-humo.md)): conectadas OpenRouter
+(`provider: "openai"` + `base_url`, la forma citada textualmente en la documentación real — no la
+nativa `"openrouter"`, sin ejemplo verificado) y Bonsai (base `fast-agent` dedicada, para no
+mezclar con los roles reales en `opencode`). Los 5 roles publicados de verdad
+(`POST /v1/harnesses`, `uhp/roles.yaml` con `model: gpt-5.4-mini` — `deepseek/deepseek-v3.2` no
+existe en el catálogo cerrado real de HarnessRouter, descubierto con un `422` real). Prueba de
+humo: OpenRouter respondió coherente con el mandato por **0,0068 $**; Bonsai respondió igual de
+coherente, gratis, en ~19 s (un primer dato a favor de Q8, no definitivo: un solo turno, sin
+bucle agéntico). `harness-sync` es un script local (`platform-harness/scripts/harness-sync.sh`),
+no una GitHub Action: `uhp.apl.elpalmeral.es` no resuelve desde un *runner* de GitHub (el lab es
+solo LAN/VPN) y ARC solo está instalado en `meridian-orders` (ADR 0031, de un solo repo a
+propósito).
 
 ### F5 · Enterprise Agent Platform
 - (HarnessRouter CE pasa a F4, [ADR 0024](adr/0024-harnessrouter-en-f4-proveedores.md).)
@@ -154,16 +167,16 @@ Diseño completo: [lab/harness](lab/harness.md).
   con tres ejecuciones reales (`trigger_run` vía MCP): motor Claude creó los *issues* reales #38 y
   #39 (cerrados tras confirmar, el segundo probando ya el selector de servicio); motor abierto
   disparó `aidlc-propose.yml` en un runner ARC real y Port reflejó `result: FAILED` con el motivo
-  real (`reportWorkflowStatus`) — el mensaje esperado hasta F4.7 (falta la clave de API de
-  HarnessRouter), no un fallo distinto. Cada servicio nuevo necesita sus propios
-  `aidlc-propose.yml`/`aidlc-implement.yml` y la etiqueta `aidlc:claude`; el workflow no lo
-  comprueba por sí solo. La rama del motor A no puede llamar a un rol real hasta F4.7 (publicar
-  `meridian/<rol>@X.Y.Z` en HarnessRouter), que sigue pendiente de confirmar (gasta OpenRouter,
-  toca Bonsai).
+  real (`reportWorkflowStatus`) — el mensaje esperado antes de F4.7 (faltaba la clave de API de
+  HarnessRouter). **Actualizado 13-nov tras cerrar F4.7**: `aidlc-propose.yml` ya encuentra de
+  verdad `meridian/spec-writer` publicado (ejecución real confirmada); sigue sin hacer la llamada
+  real a `/v1/responses` ni abrir el PR con el resultado — eso es trabajo posterior, no de F4.7.
+  Cada servicio nuevo necesita sus propios `aidlc-propose.yml`/`aidlc-implement.yml` y la etiqueta
+  `aidlc:claude`; el workflow no lo comprueba por sí solo.
 - ⏭️ Los validadores agénticos trabajan antes del PR; en el CI solo puertas deterministas (agentes en el CI: [playbook](demo/README.md#agentes-en-el-flujo-qué-se-podría-añadir)).
 - ✅ 13-nov · Agentes como entidades del catálogo de Port: blueprint `aidlc_agent`, 5 entidades
   (spec-writer, implementer, 3 validadores), foto de `uhp/roles.yaml` — sin sincronización
-  automática todavía (eso es `harness-sync`, F4.7).
+  automática todavía con los `id` reales que asignó HarnessRouter al publicarlos (F4.7).
 
 ### F6 · Observabilidad y coste (ADR 0032)
 - ✅ 13-nov · **Sin Langfuse**: se reutiliza el obs-stack real de docker01 (ClickHouse + OTel
@@ -181,8 +194,9 @@ Diseño completo: [lab/harness](lab/harness.md).
   `openrouter-usage.yml` (lee `GET /v1/key`, solo lectura, no gasta el presupuesto) desplegados.
   **Pendiente**: crear el secreto `OPENROUTER_API_KEY` en GitHub Actions (`agentic-platform-lab`)
   para que el *workflow* pueda autenticarse.
-- ⏭️ El puente HarnessRouter → OTel se difiere hasta F4.7 (no hay ninguna ejecución real del motor
-  A que trazar todavía).
+- ⏭️ El puente HarnessRouter → OTel sigue sin construirse: F4.7 (cerrado 13-nov) ya deja
+  ejecuciones reales que trazar (`GET /v1/traces/{session}/all`), pero escribir ese *poll* → *push*
+  OTLP no se hizo en esta sesión; queda en el *backlog*, no bloqueado.
 - ⏭️ *Dashboard* de Grafana dedicado para `meridian-orders`: cambio de `docker01`/
   `homelab-containers`, fuera de alcance de este repo por ahora.
 
