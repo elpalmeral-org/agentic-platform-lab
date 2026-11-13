@@ -98,7 +98,7 @@ sequenceDiagram
 | F4.2 | Release firmada `harness-v0.1.0`: `apm pack`, manifiesto, cosign keyless, GitHub Release ([ADR 0027](../adr/0027-release-firmada-platform-harness.md)) | A · B | ✅ 13-nov |
 | F4.3 | `meridian-orders` consume: `apm.yml`, `apm.lock.yaml`, ficheros generados · `harness-ok` obligatorio ([ADR 0028](../adr/0028-excepcion-adopcion-inicial-harness.md): adopción inicial, etiqueta `harness-adopt`) | A · B | ✅ 13-nov |
 | F4.4 | PR automático de *upgrade* con el bot, por sondeo diario ([ADR 0029](../adr/0029-pr-automatico-upgrade-harness.md)) | A · B | ✅ 13-nov |
-| F4.5 | OpenSpec en `meridian-orders`: specs base del comportamiento actual · `openspec validate --strict` · **prueba del motor B**: `/feature` de principio a fin en el Mac | B | ⚪ |
+| F4.5 | **Prueba del motor B**: `/feature` de principio a fin en el Mac, feature real (`filtrar-pedidos-por-email`, [PR #28](https://github.com/elpalmeral-org/meridian-orders/pull/28)/[#30](https://github.com/elpalmeral-org/meridian-orders/pull/30)/[#31](https://github.com/elpalmeral-org/meridian-orders/pull/31)) | B | ✅ 13-nov |
 | F4.6 | HarnessRouter CE en k3s (addon GitOps, ESO, TLS) con OpenRouter y Bonsai | A | ⚪ |
 | F4.7 | `harness-sync` (release → `meridian/<rol>@X.Y.Z`) · prueba de humo: un mandato con OpenRouter y con Bonsai, comparado con el motor B | A | ⚪ |
 | F4.8 | Port: release del harness y versión por servicio · regla «harness al día y sin *drift*» | A · B | ⚪ |
