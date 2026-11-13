@@ -142,10 +142,16 @@ Diseño completo: [lab/harness](lab/harness.md).
 
 ### F5 · Enterprise Agent Platform
 - (HarnessRouter CE pasa a F4, [ADR 0024](adr/0024-harnessrouter-en-f4-proveedores.md).)
-- ARC (*Actions Runner Controller*) con runners efímeros para el motor A.
-- Workflow de Port «Pedir feature» con selector de motor: abierto → `aidlc-propose`/`aidlc-implement` en ARC vía UHP; Claude → *issue* `aidlc:claude` para `/feature` en el Mac ([ADR 0025](adr/0025-dos-motores-un-harness.md)).
-- Los validadores agénticos trabajan antes del PR; en el CI solo puertas deterministas (agentes en el CI: [playbook](demo/README.md#agentes-en-el-flujo-qué-se-podría-añadir)).
-- Agentes como entidades del catálogo de Port.
+- ✅ 13-nov · ARC (*Actions Runner Controller*) con runners efímeros para el motor A
+  ([ADR 0031](adr/0031-arc-runners-k3s01.md)): `gha-runner-scale-set` 0.15.1 en k3s01, GitHub App
+  dedicada de un solo repo (`meridian-orders`), verificado con un *job* real (`arc-smoke-test.yml`,
+  *pod* efímero creado, ejecutado y limpiado solo).
+- ⏭️ Workflow de Port «Pedir feature» con selector de motor: abierto → `aidlc-propose`/`aidlc-implement`
+  en ARC vía UHP; Claude → *issue* `aidlc:claude` para `/feature` en el Mac ([ADR 0025](adr/0025-dos-motores-un-harness.md)).
+  La rama del motor A no puede llamar a un rol real hasta F4.7 (publicar `meridian/<rol>@X.Y.Z` en
+  HarnessRouter), que sigue pendiente de confirmar (gasta OpenRouter, toca Bonsai).
+- ⏭️ Los validadores agénticos trabajan antes del PR; en el CI solo puertas deterministas (agentes en el CI: [playbook](demo/README.md#agentes-en-el-flujo-qué-se-podría-añadir)).
+- ⏭️ Agentes como entidades del catálogo de Port.
 
 ### F6 · Observabilidad
 - OTel desde HarnessRouter, runners y app hacia el obs-stack de docker01.
