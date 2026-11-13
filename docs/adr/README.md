@@ -32,3 +32,4 @@ decisión, se escribe otra que la sustituye.
 | [0025](0025-dos-motores-un-harness.md) | Un harness, dos motores: abierto (UHP) y Claude Code con suscripción | Aceptada | 2026-10-29 |
 | [0026](0026-ci-obligatorio-platform-harness.md) | CI obligatorio de `platform-harness`: `apm-cli` por pip, un único check `validate-ok` | Aceptada | 2026-11-13 |
 | [0027](0027-release-firmada-platform-harness.md) | Release firmada de `platform-harness`: bundle `claude-plugin`, firma keyless con la identidad del workflow | Aceptada | 2026-11-13 |
+| [0028](0028-excepcion-adopcion-inicial-harness.md) | Excepción visible para la adopción inicial del harness: etiqueta `harness-adopt` | Aceptada | 2026-11-13 |
