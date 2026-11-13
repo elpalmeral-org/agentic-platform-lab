@@ -103,7 +103,10 @@ sequenceDiagram
 | F4.7 | `harness-sync` (release → `meridian/<rol>@X.Y.Z`) · prueba de humo: un mandato con OpenRouter y con Bonsai, comparado con el motor B | A | ⚪ |
 | F4.8 | Port: blueprint `harness_status` por servicio (versión, sin *drift*, firma, versión mínima) · scorecard `harness_governance` (Gold en `meridian-orders`) | A · B | ✅ 13-nov |
 
-En F5: ARC para el motor A en CI y el workflow de Port «Pedir feature» con selector de motor.
+F5 (✅ 13-nov): ARC para el motor A en CI y el workflow de Port «Pedir feature» con selector de
+motor (`pedir-feature`), verificado con dos ejecuciones reales — motor abierto dispara
+`aidlc-propose.yml` en un runner ARC real (falla limpio hasta F4.7); motor Claude crea un *issue*
+real con la etiqueta `aidlc:claude`.
 
 ## 5. Riesgos abiertos
 
