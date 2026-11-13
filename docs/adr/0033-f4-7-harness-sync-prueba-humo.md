@@ -97,3 +97,59 @@ Investigación real contra la API desplegada (`https://uhp.apl.elpalmeral.es`) y
   *backends* configurados, en vez de adivinar otra variable de entorno a ciegas).
 - ⚠️ El presupuesto de OpenRouter (10 $) y el *slot* de Bonsai son recursos compartidos y no
   recargables: la prueba de humo usa el mínimo de llamadas necesario, no una batería de pruebas.
+
+## Resultado real (F4.7 cerrado, 13-nov-2026)
+
+Ejecutado de verdad, con hallazgos reales que corrigen varios puntos de arriba:
+
+1. **`GET /v1/harnesses` devuelve `{"harnesses": [...]}`, no un array suelto.** Corregido en
+   `aidlc-propose.yml`/`aidlc-implement.yml` y en el script de *sync* (`.harnesses[]`, no `.[]`).
+2. **El catálogo de modelos de HarnessRouter es cerrado, no un paso directo a cualquier *slug* del
+   proveedor.** Intentar publicar con `model: "deepseek/deepseek-v3.2"` (lo que tenía
+   `uhp/roles.yaml`) dio `422 model_not_available` con la lista real de modelos ofrecidos para
+   `opencode` (familias `gpt-*`, `claude-*`, `gemini-*`, `deepseek-v4*`, …, ninguno llamado
+   "deepseek-v3.2"). `uhp/roles.yaml` pasa a `model: gpt-5.4-mini` — el nombre de catálogo no
+   implica qué modelo real sirve la petición: la respuesta de `/v1/responses` lo confirma en
+   `served_model` (p. ej. `"openai/gpt-5.4-mini"` por OpenRouter, o `"bonsai"` por Bonsai).
+3. **`POLICY_OPENCODE` confirmado de verdad** (no solo inferido): `GET /v1/models` mostró modelos
+   `gpt-*` disponibles para `opencode` y ninguno para `codex` (sin *policy*) — la *policy* por
+   *backend* sí gatea la disponibilidad, y el nombre inferido era correcto.
+4. **`HR_SECRET_GLOBAL_HARNESS_POLICY_<BACKEND>` es un recurso GLOBAL por *backend*, no por
+   harness.** Para comparar OpenRouter y Bonsai con el mismo mandato sin un *fallback* silencioso
+   entre los 5 roles reales, se dedicó la base `fast-agent` (ya en `HR_BACKENDS`, sin *policy*
+   previa) exclusivamente a Bonsai (`POLICY_FAST_AGENT={"chain":["bonsai"]}`), y `opencode` quedó
+   solo con OpenRouter (`POLICY_OPENCODE={"chain":["openrouter"]}`, sin Bonsai de reserva — ADR
+   0025: ningún rol real va a Bonsai todavía). El campo `backend` de `CreateResponseBody` se probó
+   como posible selector de conexión por petición y **no lo es** (ignorado; la petición siguió
+   resolviendo por `openrouter`).
+5. **`harness-sync` NO es una GitHub Action, es un script local** (`platform-harness/scripts/
+   harness-sync.sh`). Hallazgo real al intentarlo como *workflow*: `uhp.apl.elpalmeral.es` no
+   resuelve desde un *runner* de GitHub (`curl: Could not resolve host`) — el laboratorio es solo
+   LAN/VPN ("Todo sale, nada entra", CLAUDE.md §1) — y el único *runner* con LAN (`arc-aidlc`, ARC)
+   está instalado solo en `meridian-orders` (ADR 0031, alcance de un solo repo a propósito).
+   Ampliarlo a `platform-harness` habría sido una decisión de seguridad nueva, no un detalle de
+   implementación. Se ejecuta a mano desde un Mac con la VPN activa; la clave sale de 1Password con
+   `op read`, nunca de un secreto de CI de este repo.
+6. **Prueba de humo real, con los 5 roles ya publicados** (`meridian/spec-writer`,
+   `meridian/implementer`, `meridian/spec-validator`, `meridian/security-gate`,
+   `meridian/impl-conformance` — `POST /v1/harnesses` × 5, gratis):
+   - **OpenRouter** (`meridian/spec-writer`, mandato real, *prompt* mínimo): `connection:
+     "openrouter"`, `served_model: "openai/gpt-5.4-mini"`, respuesta coherente con el protocolo del
+     mandato (mencionó el *grounding* como primer paso). Coste real: **0,0068 $** (comprobado con
+     `GET /v1/key` antes y después). Latencia: segundos, no medida con precisión.
+   - **Bonsai** (mismo mandato, mismo *prompt*, base `fast-agent` dedicada, comprobado antes que
+     `llamacpp:requests_processing` estuviera a 0): `connection: "bonsai"`, `served_model:
+     "bonsai"`, respuesta igualmente coherente (mencionó *grounding* y clasificación de datos).
+     Coste: 0 $. Latencia real: **~19 s** para una sola respuesta corta, sin bucle agéntico — un
+     primer dato a favor de Q8, no una respuesta definitiva (no se probó un bucle largo con
+     herramientas).
+7. **`aidlc-propose.yml`/`aidlc-implement.yml` corregidos** (prefijo `/api/harness`, filtro
+   `.harnesses[]`, cabecera `Authorization: Bearer` con el secreto `HARNESSROUTER_API_KEY` — de
+   organización, `elpalmeral-org`, visible para `platform-harness` y `meridian-orders`). Siguen sin
+   hacer la llamada real a `/v1/responses` ni abrir PR con el resultado: eso es trabajo posterior a
+   la prueba de humo, no de F4.7.
+
+**F4.7 queda cerrado**: los 5 roles están publicados y alcanzables por OpenRouter; Bonsai está
+conectado y probado con un mandato real; el gasto total de la prueba fue de **0,0068 $** sobre los
+10 $ disponibles. Q8 (¿aguanta Bonsai un bucle agéntico largo?) sigue abierta — lo que se midió es
+una respuesta de un solo turno, no un bucle con herramientas.
