@@ -35,3 +35,4 @@ decisión, se escribe otra que la sustituye.
 | [0028](0028-excepcion-adopcion-inicial-harness.md) | Excepción visible para la adopción inicial del harness: etiqueta `harness-adopt` | Aceptada | 2026-11-13 |
 | [0029](0029-pr-automatico-upgrade-harness.md) | PR automático de *upgrade* del harness: el bot, por sondeo, no por *dispatch* | Aceptada | 2026-11-13 |
 | [0030](0030-harnessrouter-ce-despliegue-k3s.md) | HarnessRouter CE en k3s01: `StatefulSet`, imagen por digest, sin configurar proveedores todavía | Aceptada | 2026-11-13 |
+| [0031](0031-arc-runners-k3s01.md) | ARC en k3s01: `gha-runner-scale-set`, GitHub App dedicada de un solo repo | Aceptada | 2026-11-13 |
