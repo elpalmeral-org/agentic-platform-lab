@@ -146,10 +146,15 @@ Diseño completo: [lab/harness](lab/harness.md).
   ([ADR 0031](adr/0031-arc-runners-k3s01.md)): `gha-runner-scale-set` 0.15.1 en k3s01, GitHub App
   dedicada de un solo repo (`meridian-orders`), verificado con un *job* real (`arc-smoke-test.yml`,
   *pod* efímero creado, ejecutado y limpiado solo).
-- ⏭️ Workflow de Port «Pedir feature» con selector de motor: abierto → `aidlc-propose`/`aidlc-implement`
-  en ARC vía UHP; Claude → *issue* `aidlc:claude` para `/feature` en el Mac ([ADR 0025](adr/0025-dos-motores-un-harness.md)).
-  La rama del motor A no puede llamar a un rol real hasta F4.7 (publicar `meridian/<rol>@X.Y.Z` en
-  HarnessRouter), que sigue pendiente de confirmar (gasta OpenRouter, toca Bonsai).
+- ✅ 13-nov · Workflow de Port «Pedir feature» con selector de motor: abierto → `dispatch_workflow`
+  de `aidlc-propose.yml` en ARC vía UHP; Claude → `create_issue` con etiqueta `aidlc:claude` para
+  `/feature` en el Mac ([ADR 0025](adr/0025-dos-motores-un-harness.md)). Verificado con dos
+  ejecuciones reales (`trigger_run` vía MCP): motor Claude creó el *issue* real #38 (cerrado tras
+  confirmar); motor abierto disparó `aidlc-propose.yml` en un runner ARC real y Port reflejó
+  `result: FAILED` con el motivo real (`reportWorkflowStatus`) — el mensaje esperado hasta F4.7
+  (falta la clave de API de HarnessRouter), no un fallo distinto. La rama del motor A no puede
+  llamar a un rol real hasta F4.7 (publicar `meridian/<rol>@X.Y.Z` en HarnessRouter), que sigue
+  pendiente de confirmar (gasta OpenRouter, toca Bonsai).
 - ⏭️ Los validadores agénticos trabajan antes del PR; en el CI solo puertas deterministas (agentes en el CI: [playbook](demo/README.md#agentes-en-el-flujo-qué-se-podría-añadir)).
 - ✅ 13-nov · Agentes como entidades del catálogo de Port: blueprint `aidlc_agent`, 5 entidades
   (spec-writer, implementer, 3 validadores), foto de `uhp/roles.yaml` — sin sincronización
