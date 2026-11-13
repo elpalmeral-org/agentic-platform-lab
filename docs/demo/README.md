@@ -1,7 +1,7 @@
 # ③ Demo · recursos para enseñar el lab
 
-> Se construye en la fase F7, cuando el lab funcione de extremo a extremo. De momento recoge el
-> **diseño** de la demo para que el resto de fases lo tengan en cuenta.
+> F7 cerrado (13-nov-2026, [ADR 0034](../adr/0034-f7-kit-de-demo.md)). Este fichero sigue siendo el
+> **diseño**; la versión ejecutable está en `guion.md`, con lo que es real hoy.
 
 ## Guion: tres actos que acaban donde empiezan (decidido el 27-oct)
 
@@ -52,10 +52,10 @@ stateDiagram-v2
     Ensuciado --> Limpio: script de reset (≤ 10 min)
 ```
 
-## Recursos que vivirán aquí
+## Recursos
 
-- `guion.md` — guion minuto a minuto, con mensajes clave por acto.
-- `prompts.md` — peticiones de feature probadas y sus resultados esperados.
-- `checklist-previo.md` — comprobaciones 30 min antes.
-- `reset.md` + script — volver al estado limpio.
-- `faq-cliente.md` — preguntas habituales (seguridad, coste, lock-in, gobierno) y respuestas.
+- [`guion.md`](guion.md) — guion minuto a minuto, con mensajes clave por acto.
+- [`prompts.md`](prompts.md) — peticiones de *feature* probadas, con su resultado real.
+- [`checklist-previo.md`](checklist-previo.md) — comprobaciones 30 min antes, contra el estado real.
+- [`reset.md`](reset.md) + `../../scripts/demo-reset.sh` — volver al estado limpio, sin tocar k3s01.
+- [`faq-cliente.md`](faq-cliente.md) — preguntas habituales (seguridad, coste, *lock-in*, gobierno).

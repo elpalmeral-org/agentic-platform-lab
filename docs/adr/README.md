@@ -38,3 +38,4 @@ decisión, se escribe otra que la sustituye.
 | [0031](0031-arc-runners-k3s01.md) | ARC en k3s01: `gha-runner-scale-set`, GitHub App dedicada de un solo repo | Aceptada | 2026-11-13 |
 | [0032](0032-f6-observabilidad-coste.md) | F6: reutilizar el obs-stack existente, sin Langfuse; coste de OpenRouter en Port | Aceptada | 2026-11-13 |
 | [0033](0033-f4-7-harness-sync-prueba-humo.md) | F4.7: conectar OpenRouter y Bonsai, publicar los 5 roles, prueba de humo | Aceptada | 2026-11-13 |
+| [0034](0034-f7-kit-de-demo.md) | F7: kit de demo — guion con lo que es real hoy, *reset* sin tocar k3s01 | Aceptada | 2026-11-13 |
