@@ -30,3 +30,4 @@ decisión, se escribe otra que la sustituye.
 | [0023](0023-apm-distribucion-harness-ok.md) | APM distribuye el harness a los repos; `harness-ok` lo hace cumplir | Aceptada | 2026-10-28 |
 | [0024](0024-harnessrouter-en-f4-proveedores.md) | HarnessRouter llega en F4 y aloja el harness por rol y versión; tres proveedores | Aceptada · modificada por 0025 | 2026-10-28 |
 | [0025](0025-dos-motores-un-harness.md) | Un harness, dos motores: abierto (UHP) y Claude Code con suscripción | Aceptada | 2026-10-29 |
+| [0026](0026-ci-obligatorio-platform-harness.md) | CI obligatorio de `platform-harness`: `apm-cli` por pip, un único check `validate-ok` | Aceptada | 2026-11-13 |
