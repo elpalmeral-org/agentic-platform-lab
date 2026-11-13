@@ -224,6 +224,36 @@ propósito).
 - ✅ 13-nov · [`docs/demo/faq-cliente.md`](demo/faq-cliente.md): preguntas habituales con un hecho
   real detrás de cada respuesta, no una afirmación de folleto.
 
+### Golden path · crear un servicio nuevo (D1, ADR 0035, en marcha)
+
+Petición explícita (14-nov): repo listo para AIDLC/harness + despliegue en k3s01 + autoservicio en
+Port, hoy con una sola opción de frontend/backend/*runtime*. Investigación real (tres
+exploraciones en paralelo) antes de diseñar nada; decisiones con el usuario antes de escribir
+código (plan formal, `EnterPlanMode`): namespace independiente por servicio (sin el prefijo
+`meridian-`, que resultó específico de "Orders"), GitHub App dedicada `elpalmeral-scaffolder`
+(`Administration: write` de organización, primera credencial del lab con ese alcance) para crear
+repos, Cookiecutter (la herramienta) para plantillar — no la *action* `cookiecutter-gha` de Port,
+que exige un PAT personal (incompatible con ADR 0027).
+
+- ✅ 14-nov · **Hito 1**: [ADR 0035](adr/0035-golden-path-crear-servicio.md).
+- ✅ 14-nov · **Hito 2**: generalizados `platform-gitops/scripts/validate.sh`,
+  `scripts/port-lineage.sh` y el *mapping* de `addons/port-k8s-exporter.yaml` a cualquier servicio
+  bajo `apps/<servicio>/` (antes, los tres estaban cableados a `meridian-orders`). Verificado de
+  verdad contra el cluster real: tras fusionar y forzar la sincronización de Argo CD (`root` no
+  había recogido el commit sin refresh forzado — incidencia ya conocida), la entidad `workload`
+  real de `meridian-orders` en Port sigue exacta (mismo `identifier`/`título` que antes del
+  cambio). Única excepción documentada en el propio *mapping*: el namespace real de
+  `meridian-orders` quedó como `meridian-<entorno>` (corto, de antes de esta decisión) — no se
+  migra un namespace en vivo (perdería la base de datos) solo para generalizar un *mapping*;
+  servicios nuevos usan `<servicio>-<entorno>` sin ese prefijo.
+- ⏭️ Hito 3: repo plantilla `elpalmeral-org/service-template` (Cookiecutter, derivado de
+  `meridian-orders` sin el dominio de pedidos).
+- ⏭️ Hito 4 (**pausa para confirmar**): crear la GitHub App `elpalmeral-scaffolder`.
+- ⏭️ Hito 5: `crear-servicio.yml` en `agentic-platform-lab`.
+- ⏭️ Hito 6: *workflow* «Crear servicio» en Port (Terraform).
+- ⏭️ Hito 7 (**pausa para confirmar**): primera ejecución real — crea un repo real, abre un PR
+  real en `platform-gitops`.
+
 ## 4. Preguntas abiertas
 
 Se plantearán **cuando haga falta decidirlas**, no antes.
