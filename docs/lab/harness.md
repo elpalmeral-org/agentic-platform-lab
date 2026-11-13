@@ -94,7 +94,7 @@ sequenceDiagram
 | Paso | Qué | Motor | Estado |
 |---|---|---|---|
 | 08 (setup) | [Repo `platform-harness`](../setup/paso-08-harness.md) (rulesets de `main` y de tags), Claude Code con la suscripción, clave de OpenRouter con límite, acceso a Bonsai, credenciales y nombre de HarnessRouter, capacidad de k3s01 | A · B | ✅ 11-nov |
-| F4.1 | Contenido `harness-v0.1.0`: `apm.yml` + `.apm/` (portado de `platform-harness-lab`), MCP de Port, corpus, OPA · CI de validación | A · B | ⚪ |
+| F4.1 | Contenido `harness-v0.1.0`: `apm.yml` + `.apm/` (portado de `platform-harness-lab`), MCP de Port, corpus, OPA, `uhp/roles.yaml`, CI de validación obligatorio ([ADR 0026](../adr/0026-ci-obligatorio-platform-harness.md)) | A · B | ✅ 13-nov |
 | F4.2 | Release firmada: `apm pack`, manifiesto, cosign, GitHub Release | A · B | ⚪ |
 | F4.3 | `meridian-orders` consume: `apm.yml`, `apm.lock.yaml`, ficheros generados · `harness-ok` obligatorio | A · B | ⚪ |
 | F4.4 | PR automático de *upgrade* con el bot · versión mínima en OPA | A · B | ⚪ |
