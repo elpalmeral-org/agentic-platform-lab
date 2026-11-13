@@ -165,9 +165,26 @@ Diseño completo: [lab/harness](lab/harness.md).
   (spec-writer, implementer, 3 validadores), foto de `uhp/roles.yaml` — sin sincronización
   automática todavía (eso es `harness-sync`, F4.7).
 
-### F6 · Observabilidad
-- OTel desde HarnessRouter, runners y app hacia el obs-stack de docker01.
-- Coste y tokens por dominio, agente y versión de harness; reflejo en Port.
+### F6 · Observabilidad y coste (ADR 0032)
+- ✅ 13-nov · **Sin Langfuse**: se reutiliza el obs-stack real de docker01 (ClickHouse + OTel
+  Collector + Grafana + Prometheus), ya probado con ai-stack. Langfuse exige su propia
+  infraestructura (Postgres/Redis/ClickHouse/S3) y ya se había descartado una vez por ese motivo.
+- 🟡 13-nov · **F6.1** — backend instrumentado con trazas OTel hacia el colector de docker01
+  (`http://192.168.0.6:4317`), con un `server_request_hook` que quita la query string
+  (`customer_email`, C3) de las trazas — mismo principio que ya protege el log de acceso y los
+  errores de SQLAlchemy. Spec aprobada en OpenSpec (`instrumentar-otel-backend`, amplía
+  «Operabilidad» de `orders`), código fusionado y la imagen del backend construida y firmada.
+  **Pendiente de desplegarse a `meridian-dev`**: la promoción está bloqueada por una CVE crítica
+  nueva en la imagen base del frontend (`zlib`, no relacionada), ajena a este cambio — pendiente de
+  reintentar cuando la imagen base se reconstruya en origen.
+- 🟡 13-nov · **F6.2** — blueprint `openrouter_usage` en Port + *workflow* programado
+  `openrouter-usage.yml` (lee `GET /v1/key`, solo lectura, no gasta el presupuesto) desplegados.
+  **Pendiente**: crear el secreto `OPENROUTER_API_KEY` en GitHub Actions (`agentic-platform-lab`)
+  para que el *workflow* pueda autenticarse.
+- ⏭️ El puente HarnessRouter → OTel se difiere hasta F4.7 (no hay ninguna ejecución real del motor
+  A que trazar todavía).
+- ⏭️ *Dashboard* de Grafana dedicado para `meridian-orders`: cambio de `docker01`/
+  `homelab-containers`, fuera de alcance de este repo por ahora.
 
 ### F7 · Demo kit
 - Guion, prompts, escenarios (feature feliz, spec rechazada, gate que bloquea, rollback).
