@@ -38,7 +38,7 @@ jobs:
       - name: Entidad openrouter_usage
         id: entity
         run: |
-          jq -n --slurpfile key /tmp/key.json '
+          jq -nc --slurpfile key /tmp/key.json '
             $key[0].data as $d |
             {
               identifier: "harnessrouter-k3s01",
