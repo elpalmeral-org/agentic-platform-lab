@@ -1,0 +1,61 @@
+# Coste de OpenRouter visible en Port (F6.2, ADR 0032). Lee GET /v1/key (solo lectura: no es una
+# llamada de completion, no gasta el presupuesto de 10 $ de la clave harnessrouter-k3s01) y publica
+# la entidad única openrouter_usage con el golden path de la plataforma (ADR 0020). Corre en un
+# runner estándar de GitHub: tanto openrouter.ai como la API de Port son accesibles por Internet,
+# sin necesitar la LAN ni un runner de ARC.
+name: openrouter-usage
+
+on:
+  schedule:
+    - cron: "23 7 * * *"
+  workflow_dispatch: {}
+
+permissions: {}
+
+concurrency:
+  group: openrouter-usage
+  cancel-in-progress: false
+
+jobs:
+  openrouter-usage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: GET /v1/key
+        id: key
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          status=$(curl -s -o /tmp/key.json -w '%{http_code}' --max-time 10 \
+            -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+            https://openrouter.ai/api/v1/key)
+          if [ "$status" != "200" ]; then
+            echo "::error::GET /v1/key devolvió HTTP $status, no se publica nada en Port."
+            cat /tmp/key.json
+            exit 1
+          fi
+          jq -e '.data.usage != null' /tmp/key.json > /dev/null
+
+      - name: Entidad openrouter_usage
+        id: entity
+        run: |
+          jq -n --slurpfile key /tmp/key.json '
+            $key[0].data as $d |
+            {
+              identifier: "harnessrouter-k3s01",
+              title: "harnessrouter-k3s01",
+              properties: {
+                checked_at: (now | todate),
+                limit: $d.limit,
+                usage: $d.usage,
+                limit_remaining: $d.limit_remaining
+              }
+            }
+          ' > /tmp/entity.json
+          echo "json=$(cat /tmp/entity.json)" >> "$GITHUB_OUTPUT"
+
+      - uses: elpalmeral-org/platform-gitops/.github/actions/port-entity@534fb6e86846c5e9b13230090115906dfaf96a79 # main · F3.4a
+        with:
+          blueprint: openrouter_usage
+          entities: ${{ steps.entity.outputs.json }}
+          client-id: ${{ secrets.PORT_CLIENT_ID }}
+          client-secret: ${{ secrets.PORT_CLIENT_SECRET }}
