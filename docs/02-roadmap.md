@@ -246,8 +246,17 @@ que exige un PAT personal (incompatible con ADR 0027).
   `meridian-orders` quedó como `meridian-<entorno>` (corto, de antes de esta decisión) — no se
   migra un namespace en vivo (perdería la base de datos) solo para generalizar un *mapping*;
   servicios nuevos usan `<servicio>-<entorno>` sin ese prefijo.
-- ⏭️ Hito 3: repo plantilla `elpalmeral-org/service-template` (Cookiecutter, derivado de
-  `meridian-orders` sin el dominio de pedidos).
+- ✅ 14-nov · **Hito 3**: [`elpalmeral-org/service-template`](https://github.com/elpalmeral-org/service-template)
+  (Cookiecutter, derivado de `meridian-orders` sin el dominio de pedidos: esqueleto que arranca y
+  pasa `/healthz`/`/readyz`/`/metrics`, sin ninguna entidad de negocio). Hallazgo real durante la
+  construcción: el delimitador de Jinja por defecto (`{{ }}`) choca con `${{ }}` de GitHub Actions,
+  la interpolación de Angular y los nodos hexagonales de Mermaid — las tres cosas conviven en este
+  repo. Se cambió el delimitador a `<<= =>>` (`_jinja2_env_vars` en `cookiecutter.json`), verificado
+  con un render real local y otro real contra GitHub: `ruff format/check`, `mypy`, `pytest`
+  (12 tests, 90 % cobertura), `eslint`, `prettier`, `vitest`, `ng build` — todos en verde, sin
+  ningún `meridian`/`orders` residual salvo el paquete Rego compartido `data.meridian.pr_gates`.
+  Un *hook* `post_gen_project.sh` genera `uv.lock`/`package-lock.json` reales (nunca por *sed*, que
+  corrompería los *hashes*).
 - ⏭️ Hito 4 (**pausa para confirmar**): crear la GitHub App `elpalmeral-scaffolder`.
 - ⏭️ Hito 5: `crear-servicio.yml` en `agentic-platform-lab`.
 - ⏭️ Hito 6: *workflow* «Crear servicio» en Port (Terraform).
