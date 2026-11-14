@@ -257,8 +257,25 @@ que exige un PAT personal (incompatible con ADR 0027).
   ningún `meridian`/`orders` residual salvo el paquete Rego compartido `data.meridian.pr_gates`.
   Un *hook* `post_gen_project.sh` genera `uv.lock`/`package-lock.json` reales (nunca por *sed*, que
   corrompería los *hashes*).
-- ⏭️ Hito 4 (**pausa para confirmar**): crear la GitHub App `elpalmeral-scaffolder`.
-- ⏭️ Hito 5: `crear-servicio.yml` en `agentic-platform-lab`.
+- 🟡 14-nov · **Hito 4** (pausa para confirmar): Pablo creó la GitHub App `elpalmeral-scaffolder`
+  y el *item* en 1Password con su `private_key` real. **Hallazgo real pendiente de resolver**: la
+  App todavía no está **instalada** en `elpalmeral-org` (no aparece en
+  `GET /orgs/elpalmeral-org/installations`) — crear la App y instalarla son dos pasos distintos.
+  Para crear repos necesita instalación con alcance **"todos los repositorios"** (no puede
+  preseleccionar uno que aún no existe), y para el primer *push* del esqueleto necesita además
+  **`Contents: write`** — ADR 0035 solo pedía `Administration: write`, insuficiente para el flujo
+  real que construye `crear-servicio.yml` (crear repo + empujar contenido + *ruleset*).
+- ✅ 14-nov · **Hito 5**: [`crear-servicio.yml`](https://github.com/elpalmeral-org/agentic-platform-lab/blob/main/.github/workflows/crear-servicio.yml)
+  en `agentic-platform-lab`, con la plantilla nueva `golden-path/platform-gitops-template/`
+  (`apps/__SERVICE_SLUG__/`, `addons/__SERVICE_SLUG__.yaml`). Misma pieza para Port (hito 6) y
+  para una persona (`workflow_dispatch`). **Corrección real encontrada y arreglada en el propio
+  `validate.sh`** (hito 2): trataba "cero entornos activos" como error — pero un servicio recién
+  creado nace así a propósito (los tres comentados en su `ApplicationSet`, sin promoción todavía);
+  además un `grep` sin coincidencias rompía el script bajo `set -e` antes de llegar a ese chequeo.
+  Verificado con un servicio de prueba real (cero entornos activos, `kustomize build` con imágenes
+  de prueba) y con `meridian-orders` (sin regresión); PR #27 con `gitops-ok` en verde, fusionado.
+  Pendiente para hito 7: instalar la App (ver hito 4) y los secretos de organización
+  `SCAFFOLDER_CLIENT_ID`/`SCAFFOLDER_PRIVATE_KEY`.
 - ⏭️ Hito 6: *workflow* «Crear servicio» en Port (Terraform).
 - ⏭️ Hito 7 (**pausa para confirmar**): primera ejecución real — crea un repo real, abre un PR
   real en `platform-gitops`.
