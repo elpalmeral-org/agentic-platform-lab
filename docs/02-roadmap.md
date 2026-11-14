@@ -257,14 +257,17 @@ que exige un PAT personal (incompatible con ADR 0027).
   ningún `meridian`/`orders` residual salvo el paquete Rego compartido `data.meridian.pr_gates`.
   Un *hook* `post_gen_project.sh` genera `uv.lock`/`package-lock.json` reales (nunca por *sed*, que
   corrompería los *hashes*).
-- 🟡 14-nov · **Hito 4** (pausa para confirmar): Pablo creó la GitHub App `elpalmeral-scaffolder`
-  y el *item* en 1Password con su `private_key` real. **Hallazgo real pendiente de resolver**: la
-  App todavía no está **instalada** en `elpalmeral-org` (no aparece en
-  `GET /orgs/elpalmeral-org/installations`) — crear la App y instalarla son dos pasos distintos.
-  Para crear repos necesita instalación con alcance **"todos los repositorios"** (no puede
-  preseleccionar uno que aún no existe), y para el primer *push* del esqueleto necesita además
-  **`Contents: write`** — ADR 0035 solo pedía `Administration: write`, insuficiente para el flujo
-  real que construye `crear-servicio.yml` (crear repo + empujar contenido + *ruleset*).
+- ✅ 14-nov · **Hito 4**: GitHub App `elpalmeral-scaffolder` creada por Pablo (*item* en
+  1Password con su `private_key` real) e **instalada** en `elpalmeral-org` con alcance **"todos
+  los repositorios"** (necesario: crea repos que aún no existen, no se puede preseleccionar uno).
+  Dos hallazgos reales, verificados vía `GET /orgs/elpalmeral-org/installations`, no solo en la
+  UI: (1) crear la App e instalarla son pasos distintos — la primera comprobación la encontró sin
+  instalar del todo; (2) `Administration: write` (lo único que pedía ADR 0035) no basta para el
+  flujo real de `crear-servicio.yml` (crea repo + empuja el primer commit + *ruleset*) — hace
+  falta además `Contents: write`. Al añadirlo a la App, la instalación existente no lo recogió
+  sola (actualización de permisos *in-place* atascada); se resolvió con la notificación de
+  aprobación de permisos nuevos de GitHub, que sí llegó. Confirmado por API:
+  `{"administration":"write","contents":"write","metadata":"read"}`, `repository_selection: all`.
 - ✅ 14-nov · **Hito 5**: [`crear-servicio.yml`](https://github.com/elpalmeral-org/agentic-platform-lab/blob/main/.github/workflows/crear-servicio.yml)
   en `agentic-platform-lab`, con la plantilla nueva `golden-path/platform-gitops-template/`
   (`apps/__SERVICE_SLUG__/`, `addons/__SERVICE_SLUG__.yaml`). Misma pieza para Port (hito 6) y
