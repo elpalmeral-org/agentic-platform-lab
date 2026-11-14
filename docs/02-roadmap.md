@@ -277,9 +277,15 @@ que exige un PAT personal (incompatible con ADR 0027).
   además un `grep` sin coincidencias rompía el script bajo `set -e` antes de llegar a ese chequeo.
   Verificado con un servicio de prueba real (cero entornos activos, `kustomize build` con imágenes
   de prueba) y con `meridian-orders` (sin regresión); PR #27 con `gitops-ok` en verde, fusionado.
-  Pendiente para hito 7: instalar la App (ver hito 4) y los secretos de organización
-  `SCAFFOLDER_CLIENT_ID`/`SCAFFOLDER_PRIVATE_KEY`.
-- ⏭️ Hito 6: *workflow* «Crear servicio» en Port (Terraform).
+  Pendiente para hito 7: los secretos de organización
+  `SCAFFOLDER_CLIENT_ID`/`SCAFFOLDER_PRIVATE_KEY` (la App ya está instalada, ver hito 4).
+- ✅ 14-nov · **Hito 6**: *workflow* «Crear servicio» en Port
+  (`port/workflow-crear-servicio.tf`), mismo patrón que `pedir-feature`/`promote-meridian-orders`:
+  formulario (`nombre`, `frontend`/`backend`/`runtime` — hoy un único valor cada uno) →
+  `dispatch_workflow` de `crear-servicio.yml` por GitHub Ocean. `terraform plan`: 1 to add, 0 to
+  change, 0 to destroy — no tocó nada existente. Fusionado con confirmación explícita (aplica de
+  verdad en Port); verificado vía MCP (`get_workflow`) que el workflow vivo coincide exactamente
+  con el Terraform, no solo que el PR se fusionó.
 - ⏭️ Hito 7 (**pausa para confirmar**): primera ejecución real — crea un repo real, abre un PR
   real en `platform-gitops`.
 
