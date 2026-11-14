@@ -1,0 +1,248 @@
+# Golden path «crear un servicio nuevo» (F7, ADR 0035). Lo dispara Port (self-service, «Crear
+# servicio») o una persona a mano (workflow_dispatch) — es la MISMA pieza en los dos casos, como
+# ya hacen aidlc-propose.yml/promote.yml con sus propios golden paths.
+#
+# Pasos reales, cada uno verificado antes de seguir al siguiente:
+#   1. Crea el repo vacío en elpalmeral-org (token de la GitHub App elpalmeral-scaffolder).
+#   2. Renderiza elpalmeral-org/service-template con Cookiecutter.
+#   3. Pinea el harness a su última release real (igual mecánica que harness-upgrade.yml).
+#   4. apm install + apm compile: el primer commit ya nace con .claude/, AGENTS.md…
+#   5. Primer commit y push a main (todavía sin ruleset: no hay nada que lo bloquee).
+#   6. Ruleset de calidad (ci-ok, conventional-commits, harness-ok; squash-only) — igual que
+#      meridian-orders.
+#   7. PR en platform-gitops con apps/<slug>/{base,overlays} + addons/<slug>.yaml — SIN
+#      auto-merge: lo revisa y fusiona una persona (cambio de infraestructura compartida).
+#
+# Fuera de alcance a propósito (ADR 0035): activar un entorno en el ApplicationSet nuevo (nace con
+# los tres comentados) y ampliar la instalación de elpalmeral-arc-runners al repo nuevo son pasos
+# manuales, posteriores, que toca cada uno decidir aparte.
+name: crear-servicio
+
+on:
+  workflow_dispatch:
+    inputs:
+      nombre:
+        description: "Nombre del servicio (p. ej. Facturas)"
+        required: true
+        type: string
+      frontend:
+        type: choice
+        options: [angular]
+        default: angular
+      backend:
+        type: choice
+        options: [fastapi]
+        default: fastapi
+      runtime:
+        type: choice
+        options: [k3s01]
+        default: k3s01
+
+permissions: {}
+
+concurrency:
+  group: crear-servicio-${{ inputs.nombre }}
+  cancel-in-progress: false
+
+jobs:
+  crear-servicio:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Variables derivadas (mismo cálculo que cookiecutter.json)
+        id: vars
+        run: |
+          # Misma transformación, literal, que cookiecutter.json: .lower().replace(' ', '-').
+          # Si no coinciden carácter a carácter, el directorio que renderiza cookiecutter no
+          # coincide con este slug y los pasos siguientes (working-directory) fallan.
+          slug="$(echo "${{ inputs.nombre }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')"
+          [[ "$slug" =~ ^[a-z][a-z0-9-]*$ ]] || { echo "::error::el nombre solo admite letras (sin tildes), dígitos y espacios: '${{ inputs.nombre }}' -> '$slug'"; exit 1; }
+          package="$(echo "$slug" | tr '-' '_')"
+          env_prefix="$(echo "$package" | tr '[:lower:]' '[:upper:]')_"
+          echo "slug=$slug" >> "$GITHUB_OUTPUT"
+          echo "package=$package" >> "$GITHUB_OUTPUT"
+          echo "env_prefix=$env_prefix" >> "$GITHUB_OUTPUT"
+
+      - name: ¿Ya existe ese repo?
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh repo view "elpalmeral-org/${{ steps.vars.outputs.slug }}" >/dev/null 2>&1; then
+            echo "::error::elpalmeral-org/${{ steps.vars.outputs.slug }} ya existe"
+            exit 1
+          fi
+
+      - id: scaffolder
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          client-id: ${{ vars.SCAFFOLDER_CLIENT_ID }}
+          private-key: ${{ secrets.SCAFFOLDER_PRIVATE_KEY }}
+          owner: elpalmeral-org
+          permission-administration: write
+          permission-contents: write
+
+      - name: Crear el repo vacío
+        env:
+          GH_TOKEN: ${{ steps.scaffolder.outputs.token }}
+        run: |
+          gh api -X POST orgs/elpalmeral-org/repos \
+            -f "name=${{ steps.vars.outputs.slug }}" \
+            -f "description=Servicio ${{ inputs.nombre }} del agentic-platform-lab (golden path, ADR 0035)" \
+            -F private=false -F has_issues=true -F has_projects=false -F has_wiki=false
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: elpalmeral-org/service-template
+          path: service-template
+
+      - name: Renderizar la plantilla (Cookiecutter)
+        run: |
+          uvx --from cookiecutter cookiecutter --no-input --output-dir render service-template \
+            service_name="${{ inputs.nombre }}" \
+            frontend="${{ inputs.frontend }}" \
+            backend="${{ inputs.backend }}" \
+            runtime="${{ inputs.runtime }}"
+
+      - name: Pinear el harness a su última release real
+        working-directory: render/${{ steps.vars.outputs.slug }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          latest_tag="$(gh api repos/elpalmeral-org/platform-harness/releases/latest --jq .tag_name)"
+          sha="$(gh api "repos/elpalmeral-org/platform-harness/git/ref/tags/$latest_tag" --jq .object.sha)"
+          sed -i -E "s|elpalmeral-org/platform-harness#[0-9a-f]{40} # harness-v[0-9.]+|elpalmeral-org/platform-harness#$sha # $latest_tag|" apm.yml
+
+      - name: apm-cli 0.35.0 (pip, aislado con pipx)
+        run: pipx install apm-cli==0.35.0
+
+      - name: apm install + apm compile
+        working-directory: render/${{ steps.vars.outputs.slug }}
+        run: |
+          apm install
+          apm compile
+
+      - name: Primer commit y push a main
+        working-directory: render/${{ steps.vars.outputs.slug }}
+        env:
+          GH_TOKEN: ${{ steps.scaffolder.outputs.token }}
+          APP_SLUG: ${{ steps.scaffolder.outputs.app-slug }}
+          SLUG: ${{ steps.vars.outputs.slug }}
+        run: |
+          id="$(gh api "/users/${APP_SLUG}%5Bbot%5D" --jq .id)"
+          git init -q -b main
+          git config user.name "${APP_SLUG}[bot]"
+          git config user.email "${id}+${APP_SLUG}[bot]@users.noreply.github.com"
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/elpalmeral-org/${SLUG}.git"
+          git add -A
+          git commit -q -m "feat: esqueleto inicial del servicio (golden path, ADR 0035)"
+          git push -u origin main
+
+      - name: Ruleset de calidad (igual que meridian-orders)
+        env:
+          GH_TOKEN: ${{ steps.scaffolder.outputs.token }}
+          SLUG: ${{ steps.vars.outputs.slug }}
+        run: |
+          jq -n '{
+            name: "main-calidad",
+            target: "branch",
+            enforcement: "active",
+            conditions: { ref_name: { include: ["~DEFAULT_BRANCH"], exclude: [] } },
+            rules: [
+              {
+                type: "pull_request",
+                parameters: {
+                  required_approving_review_count: 0,
+                  dismiss_stale_reviews_on_push: false,
+                  require_code_owner_review: false,
+                  require_last_push_approval: false,
+                  required_review_thread_resolution: false,
+                  require_extra_approval_for_unattributed_changes: true,
+                  allowed_merge_methods: ["squash"]
+                }
+              },
+              {
+                type: "required_status_checks",
+                parameters: {
+                  strict_required_status_checks_policy: false,
+                  do_not_enforce_on_create: false,
+                  required_status_checks: [
+                    { context: "ci-ok" },
+                    { context: "conventional-commits" },
+                    { context: "harness-ok" }
+                  ]
+                }
+              }
+            ]
+          }' > /tmp/ruleset.json
+          gh api -X POST "repos/elpalmeral-org/${SLUG}/rulesets" --input /tmp/ruleset.json
+
+      - id: platform-bot
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          client-id: ${{ vars.PLATFORM_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.PLATFORM_BOT_PRIVATE_KEY }}
+          owner: elpalmeral-org
+          repositories: platform-gitops
+          permission-contents: write
+          permission-pull-requests: write
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: elpalmeral-org/platform-gitops
+          token: ${{ steps.platform-bot.outputs.token }}
+          path: platform-gitops
+          persist-credentials: false
+
+      - name: Manifiestos de apps/<slug> y addons/<slug>.yaml
+        env:
+          SLUG: ${{ steps.vars.outputs.slug }}
+          ENV_PREFIX: ${{ steps.vars.outputs.env_prefix }}
+        run: |
+          mkdir -p "platform-gitops/apps/$SLUG"
+          cp -r "golden-path/platform-gitops-template/apps/__SERVICE_SLUG__/." "platform-gitops/apps/$SLUG/"
+          cp "golden-path/platform-gitops-template/addons/__SERVICE_SLUG__.yaml" "platform-gitops/addons/$SLUG.yaml"
+          grep -rl '__SERVICE_SLUG__\|__ENV_PREFIX__' "platform-gitops/apps/$SLUG" "platform-gitops/addons/$SLUG.yaml" \
+            | while read -r f; do
+                sed -i -E "s/__SERVICE_SLUG__/$SLUG/g; s/__ENV_PREFIX__/$ENV_PREFIX/g" "$f"
+              done
+
+      - name: PR en platform-gitops
+        working-directory: platform-gitops
+        env:
+          GH_TOKEN: ${{ steps.platform-bot.outputs.token }}
+          APP_SLUG: ${{ steps.platform-bot.outputs.app-slug }}
+          SLUG: ${{ steps.vars.outputs.slug }}
+          NOMBRE: ${{ inputs.nombre }}
+        run: |
+          id="$(gh api "/users/${APP_SLUG}%5Bbot%5D" --jq .id)"
+          git config user.name "${APP_SLUG}[bot]"
+          git config user.email "${id}+${APP_SLUG}[bot]@users.noreply.github.com"
+          branch="feat/crear-servicio-${SLUG}"
+          git switch -c "$branch"
+          git add "apps/$SLUG" "addons/$SLUG.yaml"
+          git commit -m "feat: dar de alta ${SLUG} en platform-gitops (golden path, ADR 0035)"
+          git push -u origin "$branch"
+          {
+            echo "Da de alta **${NOMBRE}** (\`${SLUG}\`) en \`apps/${SLUG}/\` y \`addons/${SLUG}.yaml\`, generado por"
+            echo "[\`crear-servicio.yml\`](https://github.com/elpalmeral-org/agentic-platform-lab/blob/main/.github/workflows/crear-servicio.yml)"
+            echo "([ADR 0035](https://github.com/elpalmeral-org/agentic-platform-lab/blob/main/docs/adr/0035-golden-path-crear-servicio.md))."
+            echo
+            echo "Nace con los tres entornos **comentados** en el \`ApplicationSet\` (sin imágenes, sin desplegar"
+            echo "nada todavía) — \`validate.sh\` lo trata como un servicio recién creado, no como un error."
+            echo
+            echo "**Después de fusionar este PR**, el primer \`publish.yml\` real de"
+            echo "[\`${SLUG}\`](https://github.com/elpalmeral-org/${SLUG}) fijará las imágenes de \`dev\` por su"
+            echo "cuenta (\`scripts/promote-service.sh ${SLUG} dev sha-<commit>\`). Para que Argo CD lo despliegue,"
+            echo "alguien tiene que descomentar \`- env: dev\` en \`addons/${SLUG}.yaml\` — ese paso es manual a"
+            echo "propósito (ADR 0035): dar de alta un entorno es una decisión, no una consecuencia automática de"
+            echo "crear el repo."
+          } > /tmp/pr-body.md
+          gh pr create --base main --head "$branch" \
+            --title "feat: dar de alta ${SLUG} en platform-gitops" \
+            --body-file /tmp/pr-body.md
+
+      - if: always()
+        run: |
+          echo "### Golden path: ${{ inputs.nombre }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Repo: https://github.com/elpalmeral-org/${{ steps.vars.outputs.slug }}" >> "$GITHUB_STEP_SUMMARY"

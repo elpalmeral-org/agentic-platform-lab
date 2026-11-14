@@ -1,0 +1,30 @@
+# Entorno dev · se actualiza automáticamente con cada merge en main de __SERVICE_SLUG__.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: __SERVICE_SLUG__-dev
+
+resources:
+- ../../base
+
+configMapGenerator:
+- behavior: replace
+  literals:
+  - __ENV_PREFIX__ENVIRONMENT=dev
+  - OTEL_SERVICE_NAME=__SERVICE_SLUG__
+  - OTEL_EXPORTER_OTLP_ENDPOINT=http://192.168.0.6:4317
+  - OTEL_RESOURCE_ATTRIBUTES=environment=dev
+  name: __SERVICE_SLUG__-config
+
+patches:
+- patch: |-
+    - op: replace
+      path: /spec/rules/0/host
+      value: __SERVICE_SLUG__-dev.apl.elpalmeral.es
+  target:
+    kind: Ingress
+    name: __SERVICE_SLUG__
+
+# Sin imágenes todavía: nace sin dar de alta (ADR 0035). Las fija el primer publish.yml real del
+# repo nuevo, por scripts/promote-service.sh __SERVICE_SLUG__ dev sha-<commit> — y entonces se
+# descomenta "- env: dev" en addons/__SERVICE_SLUG__.yaml para que Argo CD lo sincronice.

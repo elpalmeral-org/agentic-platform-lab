@@ -1,0 +1,38 @@
+# Entorno prod · solo recibe versiones que YA están en staging (lo comprueban el script y gitops-ok).
+# Se lanza a mano (workflow promote de __SERVICE_SLUG__, entorno con aprobación) y lo fusiona una persona.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: __SERVICE_SLUG__-prod
+
+resources:
+- ../../base
+
+configMapGenerator:
+- behavior: replace
+  literals:
+  - __ENV_PREFIX__ENVIRONMENT=prod
+  - OTEL_SERVICE_NAME=__SERVICE_SLUG__
+  - OTEL_EXPORTER_OTLP_ENDPOINT=http://192.168.0.6:4317
+  - OTEL_RESOURCE_ATTRIBUTES=environment=prod
+  name: __SERVICE_SLUG__-config
+
+# prod: dos réplicas de API (sin estado) para que un despliegue no corte el servicio
+patches:
+- patch: |-
+    - op: replace
+      path: /spec/rules/0/host
+      value: __SERVICE_SLUG__.apl.elpalmeral.es
+  target:
+    kind: Ingress
+    name: __SERVICE_SLUG__
+- patch: |-
+    - op: replace
+      path: /spec/replicas
+      value: 2
+  target:
+    kind: Deployment
+    name: backend
+
+# Sin imágenes todavía: nace sin dar de alta (ADR 0035).
+#   workflow "promote" de __SERVICE_SLUG__ → scripts/promote-service.sh __SERVICE_SLUG__ prod X.Y.Z

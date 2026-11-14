@@ -1,0 +1,29 @@
+# Entorno staging · recibe cada release X.Y.Z por PR del bot; lo fusiona una persona.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: __SERVICE_SLUG__-staging
+
+resources:
+- ../../base
+
+configMapGenerator:
+- behavior: replace
+  literals:
+  - __ENV_PREFIX__ENVIRONMENT=staging
+  - OTEL_SERVICE_NAME=__SERVICE_SLUG__
+  - OTEL_EXPORTER_OTLP_ENDPOINT=http://192.168.0.6:4317
+  - OTEL_RESOURCE_ATTRIBUTES=environment=staging
+  name: __SERVICE_SLUG__-config
+
+patches:
+- patch: |-
+    - op: replace
+      path: /spec/rules/0/host
+      value: __SERVICE_SLUG__-staging.apl.elpalmeral.es
+  target:
+    kind: Ingress
+    name: __SERVICE_SLUG__
+
+# Sin imágenes todavía: nace sin dar de alta (ADR 0035).
+#   scripts/promote-service.sh __SERVICE_SLUG__ staging X.Y.Z   (lo lanza la release de __SERVICE_SLUG__)
