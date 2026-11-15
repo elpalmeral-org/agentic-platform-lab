@@ -96,6 +96,9 @@ jobs:
           repository: elpalmeral-org/service-template
           path: service-template
 
+      # uvx no está preinstalado en ubuntu-latest (sí en el Mac de Pablo, vía Homebrew).
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+
       - name: Renderizar la plantilla (Cookiecutter)
         run: |
           uvx --from cookiecutter cookiecutter --no-input --output-dir render service-template \
