@@ -81,6 +81,9 @@ jobs:
           owner: elpalmeral-org
           permission-administration: write
           permission-contents: write
+          # El primer commit incluye .github/workflows/ (ci.yml, publish.yml...): GitHub exige
+          # este permiso aparte de contents:write para que una GitHub App los pueda crear/tocar.
+          permission-workflows: write
 
       - name: Crear el repo vacío
         env:
