@@ -86,3 +86,41 @@ Investigación real antes de diseñar nada (tres exploraciones en paralelo contr
 - ⚠️ El catálogo de frontend/backend/*runtime* tiene hoy una sola opción válida en cada campo — el
   formulario ya está construido con `enum`, así que ampliarlo más adelante es añadir valores, no
   rediseñar nada.
+
+### Correcciones reales encontradas en la primera ejecución (hito 7, 15-nov)
+
+La primera ejecución real de principio a fin (`crear-servicio.yml` de verdad, repo real
+`facturas` de prueba) encontró cuatro hallazgos que el diseño no había anticipado — ninguno
+cambia las decisiones 1-7, todos son correcciones operativas reales:
+
+1. **`elpalmeral-scaffolder` necesita más que `Administration: write`.** Para empujar el primer
+   commit hace falta `Contents: write`; y como ese primer commit incluye `.github/workflows/*`,
+   GitHub exige además `Workflows: write` (permiso aparte, que una App sin él no puede tocar).
+   Los tres permisos, instalación con alcance "todos los repositorios" (no puede preseleccionar
+   un repo que aún no existe).
+2. **La plantilla no debe incluir `.mcp.json`, `.github/mcp.json` ni `opencode.json` ya
+   poblados.** Estos tres ficheros los genera `apm install` la primera vez que un repo adopta el
+   harness (confirmado con `git log --follow` en `meridian-orders`: nacieron en el mismo commit
+   que la adopción real, F4.3) — no son configuración genérica para copiar a mano. Copiarlos ya
+   poblados hace que `apm install` los vea "ya configurados" y no registre su propiedad en
+   `apm.lock.yaml`, lo que rompe `apm install --frozen` (y por tanto `harness-ok`) en el servicio
+   nuevo. Corregido quitándolos de `elpalmeral-org/service-template`.
+3. **La organización bloqueaba la creación de paquetes nuevos en GHCR** (`Workflow permissions:
+   Read repository contents and packages permissions`, sin poder anularlo por repo — confirmado
+   con un `409 Conflict` real al intentarlo). `meridian-orders` no lo notaba porque sus paquetes
+   ya existían de antes. Decisión explícita de Pablo: cambiar la política a nivel de
+   organización a *Read and write permissions* — afecta a todos los repos, no solo a los nuevos.
+   Los paquetes que quedaron a medio crear durante los intentos fallidos necesitaron además
+   añadir el repo a mano en "Manage Actions access" (paquete por paquete); un servicio nuevo
+   creado ya con la política correcta desde el principio no debería necesitar ese paso.
+4. **`elpalmeral-platform-bot` (instalación "selected repositories") bloqueaba
+   `release-please.yml`/`harness-upgrade.yml`/`_promote.yml` en cualquier servicio nuevo** hasta
+   añadirlo a mano a su lista de repos — un paso manual que se repetiría en cada servicio nuevo.
+   Decisión explícita de Pablo, igual criterio que el punto 3: cambiar su instalación a "todos
+   los repositorios" (el *token* que emite sigue acotado a `Contents`/`Pull requests`, no gana
+   ningún permiso nuevo — solo alcance).
+
+Verificado de verdad tras las cuatro correcciones: `publicar · backend`/`publicar · frontend`,
+`release-please`, `ci` y el PR de `platform-gitops` (con `gitops-ok` en verde) pasaron en el
+mismo repo de prueba. El repo de prueba (`facturas`) y sus dos paquetes de GHCR se borraron
+después — era solo la prueba del golden path, no un segundo servicio real del catálogo.
