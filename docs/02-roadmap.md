@@ -286,8 +286,25 @@ que exige un PAT personal (incompatible con ADR 0027).
   change, 0 to destroy — no tocó nada existente. Fusionado con confirmación explícita (aplica de
   verdad en Port); verificado vía MCP (`get_workflow`) que el workflow vivo coincide exactamente
   con el Terraform, no solo que el PR se fusionó.
-- ⏭️ Hito 7 (**pausa para confirmar**): primera ejecución real — crea un repo real, abre un PR
-  real en `platform-gitops`.
+- ✅ 15-nov · **Hito 7**: primera ejecución real de principio a fin (`gh workflow run
+  crear-servicio.yml`, servicio de prueba `facturas`). Cuatro hallazgos reales, cada uno
+  encontrado por un fallo real de CI y arreglado en su sitio — detalle completo en [ADR
+  0035](adr/0035-golden-path-crear-servicio.md#correcciones-reales-encontradas-en-la-primera-ejecución-hito-7-15-nov):
+  permisos reales de `elpalmeral-scaffolder` (`Contents`+`Workflows`, no solo
+  `Administration`), la plantilla no debe empaquetar `.mcp.json`/`.github/mcp.json`/
+  `opencode.json` ya poblados (los genera `apm install`), la organización bloqueaba crear
+  paquetes nuevos en GHCR (decisión explícita: `Workflow permissions` → *Read and write*,
+  org-wide), y `elpalmeral-platform-bot` necesitaba "todos los repositorios" para no ser un paso
+  manual en cada servicio nuevo (decisión explícita, mismo criterio). Verificado de verdad tras
+  las cuatro correcciones: `ci`, `publicar · backend`/`publicar · frontend`, `release-please` y
+  el PR de `platform-gitops` (con `gitops-ok` en verde) — todos en verde en el mismo repo de
+  prueba, sin ningún parche más. `facturas` y sus dos paquetes de GHCR se borraron después (era
+  la prueba del golden path, no un segundo servicio real).
+
+**Golden path cerrado por completo (hitos 1-7).** Crear un servicio real de aquí en adelante
+usa `crear-servicio.yml` (CLI o Port) sin ningún paso manual salvo, si se quiere, activar un
+entorno (descomentar `addons/<slug>.yaml`) y, solo si el servicio quiere el motor abierto de
+AIDLC, ampliar `elpalmeral-arc-runners` (ADR 0035, decisión 7 — deliberadamente manual).
 
 ## 4. Preguntas abiertas
 
