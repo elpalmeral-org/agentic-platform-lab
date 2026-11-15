@@ -224,6 +224,10 @@ jobs:
           id="$(gh api "/users/${APP_SLUG}%5Bbot%5D" --jq .id)"
           git config user.name "${APP_SLUG}[bot]"
           git config user.email "${id}+${APP_SLUG}[bot]@users.noreply.github.com"
+          # persist-credentials: false en el checkout no deja credential.helper configurado;
+          # el token no se guarda en .git/config, el helper lo lee de GH_TOKEN en cada push.
+          # shellcheck disable=SC2016
+          git config credential.helper '!f() { echo username=x-access-token; echo "password=${GH_TOKEN}"; }; f'
           branch="feat/crear-servicio-${SLUG}"
           git switch -c "$branch"
           git add "apps/$SLUG" "addons/$SLUG.yaml"
